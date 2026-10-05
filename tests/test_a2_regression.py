@@ -12,11 +12,12 @@ from machining_demo.result_recorder import ResultRecorder
 from machining_demo.scene_manager import SceneManager
 from machining_demo.arm_controller import ArmController
 from machining_demo.evidence import cycle_errors, log_errors
+from machining_demo import layout
 
 
 class TaskTests(unittest.TestCase):
     def setUp(self):
-        Node.overrides = {'auto_start': False, 'slot': 2}
+        Node.overrides = {'auto_start': False, 'repeat_cycle': False, 'slot': 2}
         self.node = TaskManager()
 
     def ready(self, state=MachineStatus.READY):
@@ -220,10 +221,109 @@ class TaskTests(unittest.TestCase):
         self.assertEqual(self.node.state, ABORTED)
 
     def test_bad_parameters_fail_early(self):
-        for values in ({'slot': 3}, {'machining_timeout': 0.0}, {'loop_rate': float('nan')}):
+        for values in ({'slot': 3}, {'machining_timeout': 0.0},
+                       {'loop_rate': float('nan')}, {'repeat_delay': 0.0}):
             Node.overrides = values
             with self.assertRaises(ValueError):
                 TaskManager()
+
+    def test_continuous_mode_runs_two_complete_cycles_without_relaunch(self):
+        self.node.params['repeat_cycle'] = True
+        self.returned()
+        self.finish_arm()
+        self.assertEqual(self.node._completed_cycles, 1)
+        self.node._tick()
+        self.assertEqual(self.node.state, DONE)
+        self.assertEqual(len(self.node._arm_client.calls), 5)
+        self.node.clock.advance(3.1)
+        self.ready()
+        self.node._tick()  # 保留完成状态至轮间间隔结束
+        self.node._tick()  # 自动进入下一轮，未调用 start 服务
+        self.assertEqual(self.node.state, WAIT_STATION)
+        self.node._tick()
+        self.finish_arm()
+        self.finish_occupancy()
+        self.finish_arm()
+        self.ready(MachineStatus.DONE)
+        self.node._tick()
+        self.finish_arm()
+        self.finish_arm()
+        self.finish_occupancy()
+        self.finish_arm()
+        self.assertEqual(self.node._completed_cycles, 2)
+        self.assertEqual(self.node.state, DONE)
+        self.assertEqual([call.command for call in self.node._arm_client.calls],
+                         ['pick', 'place', 'retrieve', 'return', 'home'] * 2)
+        self.assertTrue(all(call.slot == 2 for call in self.node._arm_client.calls))
+
+    def test_cancel_between_cycles_keeps_simulation_idle(self):
+        self.node.params['repeat_cycle'] = True
+        self.returned()
+        self.finish_arm()
+        self.assertTrue(self.node._cancel_cb(ns(), ns()).success)
+        self.assertEqual(self.node.state, IDLE)
+        self.node.clock.advance(100)
+        self.ready()
+        self.node._tick()
+        self.assertEqual(self.node.state, IDLE)
+        self.assertEqual(len(self.node._arm_client.calls), 5)
+        self.assertTrue(self.node._start_cb(ns(slot=1), ns()).success)
+        self.assertEqual(self.node.state, WAIT_STATION)
+
+    def test_cancel_active_continuous_task_does_not_restart(self):
+        self.node.params['repeat_cycle'] = True
+        self.start()
+        self.node._cancel_cb(ns(), ns())
+        self.node._tick()
+        self.node.clock.advance(100)
+        self.ready()
+        self.node._tick()
+        self.assertEqual(self.node.state, ABORTED)
+        self.assertIsNone(self.node._next_cycle_at)
+        self.assertFalse(self.node._arm_client.calls)
+
+    def test_failed_continuous_cycle_does_not_restart(self):
+        self.node.params['repeat_cycle'] = True
+        self.returned()
+        self.finish_arm(False)
+        self.node.clock.advance(100)
+        self.ready()
+        self.node._tick()
+        self.assertEqual(self.node.state, ABORTED)
+        self.assertEqual(self.node._completed_cycles, 0)
+        self.assertIsNone(self.node._next_cycle_at)
+
+    def test_next_cycle_waits_for_machine_ready(self):
+        self.node.params['repeat_cycle'] = True
+        self.returned()
+        self.finish_arm()
+        self.node.clock.advance(3.1)
+        self.ready(MachineStatus.BUSY)
+        self.node._tick()
+        self.node._tick()
+        self.node._tick()
+        self.assertEqual(self.node.state, WAIT_STATION)
+        self.assertEqual(len(self.node._arm_client.calls), 5)
+        self.ready()
+        self.node._tick()
+        self.assertEqual(self.node.state, PICK)
+
+    def test_single_cycle_can_start_again_without_relaunch(self):
+        self.returned()
+        self.finish_arm()
+        self.node._tick()
+        self.node.clock.advance(100)
+        self.ready()
+        self.node._tick()
+        self.assertEqual(self.node.state, IDLE)
+        self.assertTrue(self.node._start_cb(ns(slot=0), ns()).success)
+
+    def test_manual_start_disables_pending_initial_auto_start(self):
+        Node.overrides = {'auto_start': True, 'repeat_cycle': False}
+        self.node = TaskManager()
+        self.assertIsNotNone(self.node._auto_timer)
+        self.node._start_cb(ns(slot=0), ns())
+        self.assertIsNone(self.node._auto_timer)
 
 
 class MachineTests(unittest.TestCase):
@@ -275,14 +375,33 @@ class GeometryTests(unittest.TestCase):
         node = ArmController.__new__(ArmController)
         scenes = []
         node._apply_scene = lambda scene: scenes.append(scene) or True
-        self.assertTrue(node._attach_workpiece('part'))
-        self.assertTrue(node._detach_workpiece('part', (0.10, -0.25, 0.122)))
+        self.assertTrue(node._attach_workpiece('workpiece_1'))
+        self.assertTrue(node._detach_workpiece('workpiece_1', (0.10, -0.25, 0.122)))
         attached = scenes[0].robot_state.attached_collision_objects[0].object
         detached = scenes[1].world.collision_objects[0]
         self.assertEqual(attached.pose.position.z, 0.0)
         self.assertEqual(attached.primitive_poses[0].position.z, 0.10)
         self.assertEqual(detached.pose.position.z, 0.0)
         self.assertEqual(detached.primitive_poses[0].position.z, 0.122)
+        for scene in scenes:
+            color = scene.object_colors[0]
+            self.assertEqual(color.id, 'workpiece_1')
+            self.assertEqual((color.color.r, color.color.g, color.color.b, color.color.a),
+                             layout.OBJECT_COLORS['workpiece_1'])
+
+    def test_initial_scene_assigns_a_distinct_color_to_every_object(self):
+        node = SceneManager.__new__(SceneManager)
+        scenes = []
+        node.get_logger = lambda: ns(info=lambda message: None)
+        node._apply = lambda scene: scenes.append(scene) or True
+        node._build_scene()
+        scene = scenes[0]
+        self.assertEqual({obj.id for obj in scene.world.collision_objects},
+                         {color.id for color in scene.object_colors})
+        self.assertEqual(len(scene.object_colors), 6)
+        rgba_values = {(color.color.r, color.color.g, color.color.b, color.color.a)
+                       for color in scene.object_colors}
+        self.assertEqual(len(rgba_values), 6)
 
     def test_scene_initialization_spins_service_response(self):
         node = SceneManager.__new__(SceneManager)

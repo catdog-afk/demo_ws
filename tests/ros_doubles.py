@@ -201,6 +201,13 @@ class PlanningScene:
     def __init__(self):
         self.world = ns(collision_objects=[])
         self.robot_state = ns(is_diff=False, attached_collision_objects=[])
+        self.object_colors = []
+
+
+class ObjectColor:
+    def __init__(self):
+        self.id = ''
+        self.color = ns(r=0.0, g=0.0, b=0.0, a=0.0)
 
 
 class Primitive:
@@ -228,7 +235,7 @@ def install():
         'geometry_msgs.msg': dict(Pose=Pose, TransformStamped=Data),
         'shape_msgs.msg': dict(SolidPrimitive=Primitive),
         'moveit_msgs.msg': dict(PlanningScene=PlanningScene, CollisionObject=CollisionObject,
-                               AttachedCollisionObject=Data),
+                               AttachedCollisionObject=Data, ObjectColor=ObjectColor),
         'moveit_msgs.action': dict(MoveGroup=Data),
         'moveit_msgs.srv': dict(ApplyPlanningScene=Service),
         'demo_interfaces.msg': dict(TaskState=TaskState, MachineStatus=MachineStatus,

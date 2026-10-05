@@ -45,6 +45,7 @@ from moveit_msgs.srv import ApplyPlanningScene
 from demo_interfaces.srv import ArmCommand
 
 from machining_demo import layout
+from machining_demo.scene_colors import object_color
 
 # 规划组关节
 ARM_JOINTS = ['panda_joint%d' % i for i in range(1, 8)]
@@ -318,6 +319,7 @@ class ArmController(Node):
         co.pose.orientation.w = 1.0
         aco.object = co
         scene.robot_state.attached_collision_objects = [aco]
+        scene.object_colors = [object_color(name)]
         return self._apply_scene(scene)
 
     def _detach_workpiece(self, name, world_xyz):
@@ -350,6 +352,7 @@ class ArmController(Node):
         co.primitive_poses = [pose]
         co.pose.orientation.w = 1.0
         scene.world.collision_objects = [co]
+        scene.object_colors = [object_color(name)]
         return self._apply_scene(scene)
 
     # ---------- 基础动作 ----------

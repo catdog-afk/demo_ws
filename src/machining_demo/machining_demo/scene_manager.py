@@ -20,6 +20,7 @@ from demo_interfaces.msg import TrayOccupancy
 from demo_interfaces.srv import SetOccupancy
 
 from machining_demo import layout
+from machining_demo.scene_colors import object_color
 
 
 class SceneManager(Node):
@@ -117,6 +118,7 @@ class SceneManager(Node):
                 self._box(layout.workpiece_name(slot),
                           (layout.WORKPIECE_SIZE,) * 3,
                           layout.slot_xyz(slot)))
+        scene.object_colors = [object_color(obj.id) for obj in scene.world.collision_objects]
         if self._apply(scene):
             self.get_logger().info('场景构建完成：桌面 + 料盘(3 个工件) + 加工台')
         else:

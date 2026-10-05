@@ -33,7 +33,22 @@ ros2 launch machining_demo demo.launch.py
 
 启动后 RViz 自动打开，任务 **5 秒后自动开始**，依次展示：
 机床忙碌（初始 10s）→ 等待空闲 → 取料 → 上料 → 加工（5s，显示进度）→ 取回 → 放回原槽位 → 回零成功 → 完成。
-运行记录自动保存到 `~/demo_ws/results/`。
+**每轮完成后停留 3 秒，自动开始下一轮，无需重新启动终端或 RViz。** 默认重复加工
+`slot` 指定的工件，每轮独立保存 CSV 和摘要到 `~/demo_ws/results/`，状态标注显示已完成的轮数。
+
+只演示一轮时使用：
+
+```bash
+ros2 launch machining_demo demo.launch.py repeat_cycle:=false
+```
+
+单轮完成后仿真继续运行，可调用 `/task/start` 开始下一轮。在连续运行的轮间停留期间调用
+`/task/cancel` 会停止后续循环并保持 `IDLE`，之后可用 `/task/start` 继续。
+
+### 场景颜色
+
+桌面为深灰色、料盘为蓝色、加工台为浅灰色。槽位 0/1/2 的工件分别为橙色、黄色、紫色，
+取料、夹爪附着、上料和放回后保持颜色一致。RViz 默认视角调整为较近的俯视，便于观察工件。
 
 > ⚠️ **一次只能运行一个演示实例**。重复启动会导致控制器重复加载、
 > `/move_action` 动作名冲突，机械臂报"取料失败"。
@@ -50,6 +65,8 @@ ros2 launch machining_demo demo.launch.py
 | `auto_start` | true | 是否自动开始演示 |
 | `slot` | 0 | 取料槽位 0~2 |
 | `auto_start_delay` | 5.0 | 自动启动延迟（秒） |
+| `repeat_cycle` | true | 成功完成后连续运行；设为 false 时单轮运行 |
+| `repeat_delay` | 3.0 | 每轮完成后的停留时间（秒），必须大于 0 |
 | `initial_busy_sec` | 10.0 | 机床初始忙碌时长，便于观察忙碌等待阶段 |
 | `machining_sec` | 5.0 | 模拟加工时长 |
 | `machining_timeout` | 8.0 | 加工超时阈值（拓展：超时提示） |
@@ -73,7 +90,7 @@ ros2 launch machining_demo demo.launch.py machining_sec:=15.0 machining_timeout:
 ros2 launch machining_demo demo.launch.py machining_sec:=30.0 machining_timeout:=4.0
 ```
 
-第二次超时后进入 `ABORTED`。取消或中止后不自动启动新任务，保留工件位置供检查，
+第二次超时后进入 `ABORTED`。执行过程中取消或中止后不自动启动新任务，保留工件位置供检查，
 应先退出原演示再重新启动。`/machine/reset` 在工件仍在位或正在加工时拒绝复位，避免伪造工位空闲。
 `/task/cancel` 在当前动作结束并确认占用更新后生效；服务请求超时不会停止远端机械臂运动。
 
@@ -101,7 +118,7 @@ ROS 集成验收需要两个终端；第一个终端禁止自动启动，第二�
 
 ```bash
 # 终端 1
-ros2 launch machining_demo demo.launch.py auto_start:=false
+ros2 launch machining_demo demo.launch.py auto_start:=false repeat_cycle:=false
 ```
 
 ```bash
@@ -118,6 +135,7 @@ ros2 run machining_demo demo_test --ros-args -p slot:=1
 终端 2 增加 `-p expected_final:=ABORTED -p require_timeout:=true`。
 
 每次条件变化前退出并重新启动演示；正常任务完成后可在同一实例重复运行不同槽位。
+连续运行方式使用默认启动命令；集成验收使用单轮模式，便于核对本次任务的结束状态和日志。
 GitHub Actions 自动执行离线回归测试，ROS/MoveIt 集成验收需在 Ubuntu 22.04 + ROS2 Humble 上另行执行。
 
 ### 录制演示视频
@@ -171,7 +189,9 @@ ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -pres
 ```
 IDLE → WAIT_STATION(场景/服务/工位就绪等待) → PICK(取料) → PLACE(上料) → WAIT_MACHINING(等加工)
      → RETRIEVE(取回) → RETURN(放回、确认料盘占用、回零) → DONE → IDLE
-     任意状态 --取消/异常--> ABORTED
+     DONE --repeat_cycle=true，停留 repeat_delay 秒--> IDLE → WAIT_STATION（下一轮）
+     DONE --取消后续循环--> IDLE（保持仿真，可手动启动）
+     执行中 --取消/异常--> ABORTED（停止后续自动循环）
      WAIT_MACHINING --首次超时--> TIMEOUT(警告) → WAIT_MACHINING(延长一次等待)
      WAIT_MACHINING --第二次超时--> ABORTED
 ```
