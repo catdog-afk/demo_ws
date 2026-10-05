@@ -25,6 +25,7 @@ class TaskManager(Node):
         super().__init__('task_manager')
         defaults = {
             'auto_start': True, 'auto_start_delay': 5.0, 'slot': 0,
+            'repeat_cycle': True, 'repeat_delay': 3.0,
             'machining_timeout': 8.0, 'timeout_retry_once': True,
             'arm_call_timeout': 660.0, 'station_timeout': 30.0,
             'signal_timeout': 2.0, 'occupancy_timeout': 5.0, 'loop_rate': 10.0,
@@ -32,7 +33,8 @@ class TaskManager(Node):
         for name, value in defaults.items():
             self.declare_parameter(name, value)
         for name in ('auto_start_delay', 'machining_timeout', 'arm_call_timeout',
-                     'station_timeout', 'signal_timeout', 'occupancy_timeout', 'loop_rate'):
+                     'station_timeout', 'signal_timeout', 'occupancy_timeout',
+                     'loop_rate', 'repeat_delay'):
             value = self.get_parameter(name).value
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('%s 必须是大于 0 的有限数值' % name)
@@ -48,6 +50,8 @@ class TaskManager(Node):
         self._occ_future = self._occ_deadline = self._next_after_occ = None
         self._wait_start = self._station_start = self._warning_start = None
         self._timeout_retried = self._return_home = False
+        self._next_cycle_at = None
+        self._completed_cycles = 0
 
         latched = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
         self.pub_state = self.create_publisher(TaskState, '/task/state', latched)
@@ -106,6 +110,12 @@ class TaskManager(Node):
         return response
 
     def _cancel_cb(self, request, response):
+        if self.state in (IDLE, DONE) and self._next_cycle_at is not None:
+            self._next_cycle_at = None
+            self._set_state(IDLE, '连续运行已停止，可调用 /task/start 再次启动')
+            response.success = True
+            response.message = '已取消后续自动循环，仿真保持运行'
+            return response
         response.success = self.state not in (IDLE, DONE, ABORTED)
         if response.success:
             self.cancel_requested = True
@@ -115,11 +125,25 @@ class TaskManager(Node):
         return response
 
     def _begin_task(self):
+        # 手动启动时也撤销初次自动启动计时，避免产生额外任务。
+        if self._auto_timer is not None:
+            self.destroy_timer(self._auto_timer)
+            self._auto_timer = None
+        self._next_cycle_at = None
         self.cancel_requested = self._timeout_retried = self._return_home = False
         self._station_start = self._seconds()
         self._set_state(WAIT_STATION, '槽位 %d：等待场景、服务及工位 READY' % self.slot)
 
     def _set_state(self, state, detail):
+        if state == DONE:
+            self._completed_cycles += 1
+            detail = '第 %d 轮完成：%s' % (self._completed_cycles, detail)
+            if self.get_parameter('repeat_cycle').value:
+                delay = self.get_parameter('repeat_delay').value
+                self._next_cycle_at = self._seconds() + delay
+                detail += '；%.1f 秒后自动开始下一轮' % delay
+        elif state == ABORTED:
+            self._next_cycle_at = None
         self.state, self.detail = state, detail
         self.get_logger().info('[任务状态] %s - %s' % (layout.TASK_STATE_NAMES[state], detail))
         msg = TaskState()
@@ -180,7 +204,14 @@ class TaskManager(Node):
         self._next_after_occ = (next_state, detail)
 
     def _tick(self):
-        if self.state in (IDLE, ABORTED):
+        if self.state == IDLE:
+            if self._next_cycle_at is not None:
+                if not self.get_parameter('repeat_cycle').value:
+                    self._next_cycle_at = None
+                elif self._seconds() >= self._next_cycle_at:
+                    self._begin_task()
+            return
+        if self.state == ABORTED:
             return
         if self._occ_future is not None:
             result = self._poll(self._occ_future, self._occ_deadline, '料盘占用更新')
@@ -223,6 +254,10 @@ class TaskManager(Node):
                     self._set_state(ABORTED, '加工超时，任务中止')
             return
         if self.state == DONE:
+            if not self.get_parameter('repeat_cycle').value:
+                self._next_cycle_at = None
+            if self._next_cycle_at is not None and self._seconds() < self._next_cycle_at:
+                return
             self._set_state(IDLE, '循环结束，工件已放回且机械臂已回零')
             return
         commands = {PICK: 'pick', PLACE: 'place', RETRIEVE: 'retrieve',

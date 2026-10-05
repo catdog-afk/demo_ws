@@ -12,6 +12,8 @@
 常用参数：
     auto_start:=true         是否自动开始演示（默认 true，5 秒后自动启动）
     slot:=0                  取料槽位 0~2
+    repeat_cycle:=true       完成后连续运行（默认 true）
+    repeat_delay:=3.0        两轮任务之间的停留时间（秒）
     initial_busy_sec:=10.0   机床初始忙碌时长（演示"忙碌等待"拓展）
     machining_sec:=5.0       加工时长
     machining_timeout:=8.0   加工超时阈值（演示"超时提示"拓展）
@@ -131,6 +133,8 @@ def generate_launch_description():
         parameters=[{
             'auto_start': parameter('auto_start', bool),
             'auto_start_delay': parameter('auto_start_delay', float),
+            'repeat_cycle': parameter('repeat_cycle', bool),
+            'repeat_delay': parameter('repeat_delay', float),
             'slot': parameter('slot', int),
             'machining_timeout': parameter('machining_timeout', float),
             'station_timeout': parameter('station_timeout', float),
@@ -149,6 +153,10 @@ def generate_launch_description():
                               description='取料槽位 0~2'),
         DeclareLaunchArgument('auto_start_delay', default_value='5.0',
                               description='自动启动延迟（秒）'),
+        DeclareLaunchArgument('repeat_cycle', default_value='true',
+                              description='成功完成后自动重复上下料循环'),
+        DeclareLaunchArgument('repeat_delay', default_value='3.0',
+                              description='每轮完成后的停留时间（秒）'),
         DeclareLaunchArgument('initial_busy_sec', default_value='10.0',
                               description='机床初始忙碌时长（秒）'),
         DeclareLaunchArgument('machining_sec', default_value='5.0',
