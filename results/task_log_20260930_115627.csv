@@ -1,0 +1,35 @@
+time,source,event,detail
+11:56:22.446,task,IDLE,任务状态机就绪
+11:56:22.501,machine,BUSY,BUSY
+11:56:22.600,machine,BUSY,BUSY
+11:56:22.701,machine,BUSY,BUSY
+11:56:22.800,machine,BUSY,BUSY
+11:56:22.900,machine,BUSY,BUSY
+11:56:23.000,machine,BUSY,BUSY
+11:56:23.099,machine,BUSY,BUSY
+11:56:23.200,machine,BUSY,BUSY
+11:56:23.300,machine,BUSY,BUSY
+11:56:23.400,machine,BUSY,BUSY
+11:56:23.500,machine,BUSY,BUSY
+11:56:23.600,machine,BUSY,BUSY
+11:56:23.700,machine,BUSY,BUSY
+11:56:23.800,machine,BUSY,BUSY
+11:56:23.900,machine,BUSY,BUSY
+11:56:24.000,machine,BUSY,BUSY
+11:56:24.100,machine,BUSY,BUSY
+11:56:24.200,machine,BUSY,BUSY
+11:56:24.301,machine,BUSY,BUSY
+11:56:24.400,machine,BUSY,BUSY
+11:56:24.499,machine,BUSY,BUSY
+11:56:24.600,machine,BUSY,BUSY
+11:56:24.701,machine,BUSY,BUSY
+11:56:24.800,machine,BUSY,BUSY
+11:56:24.901,machine,BUSY,BUSY
+11:56:25.001,machine,BUSY,BUSY
+11:56:25.100,machine,BUSY,BUSY
+11:56:25.201,machine,BUSY,BUSY
+11:56:25.301,machine,BUSY,BUSY
+11:56:27.448,task,PICK,任务启动，目标槽位 0
+11:56:27.537,arm,feedback,取料：槽位 0 -> 预抓取点
+11:56:27.538,arm,feedback,规划中: 预抓取点(槽位0)
+11:56:27.936,task,ABORTED,取料失败: 动作执行失败

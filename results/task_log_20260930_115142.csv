@@ -1,0 +1,43 @@
+time,source,event,detail
+11:51:26.801,task,IDLE,任务状态机就绪
+11:51:26.888,machine,BUSY,BUSY
+11:51:26.987,machine,BUSY,BUSY
+11:51:27.088,machine,BUSY,BUSY
+11:51:27.188,machine,BUSY,BUSY
+11:51:27.289,machine,BUSY,BUSY
+11:51:27.388,machine,BUSY,BUSY
+11:51:27.488,machine,BUSY,BUSY
+11:51:27.588,machine,BUSY,BUSY
+11:51:27.688,machine,BUSY,BUSY
+11:51:27.788,machine,BUSY,BUSY
+11:51:27.887,machine,BUSY,BUSY
+11:51:27.988,machine,BUSY,BUSY
+11:51:28.089,machine,BUSY,BUSY
+11:51:28.188,machine,BUSY,BUSY
+11:51:28.288,machine,BUSY,BUSY
+11:51:28.388,machine,BUSY,BUSY
+11:51:28.489,machine,BUSY,BUSY
+11:51:28.589,machine,BUSY,BUSY
+11:51:28.688,machine,BUSY,BUSY
+11:51:28.789,machine,BUSY,BUSY
+11:51:28.888,machine,BUSY,BUSY
+11:51:28.988,machine,BUSY,BUSY
+11:51:29.088,machine,BUSY,BUSY
+11:51:29.188,machine,BUSY,BUSY
+11:51:29.288,machine,BUSY,BUSY
+11:51:29.388,machine,BUSY,BUSY
+11:51:29.488,machine,BUSY,BUSY
+11:51:29.588,machine,BUSY,BUSY
+11:51:29.688,machine,BUSY,BUSY
+11:51:31.804,task,PICK,任务启动，目标槽位 0
+11:51:31.891,arm,feedback,取料：槽位 0 -> 预抓取点
+11:51:31.892,arm,feedback,规划中: 预抓取点(槽位0)
+11:51:35.632,arm,feedback,执行完成: 预抓取点(槽位0)
+11:51:35.632,arm,feedback,规划中: 抓取点(槽位0)
+11:51:39.357,arm,feedback,执行完成: 抓取点(槽位0)
+11:51:39.358,arm,feedback,夹爪闭合
+11:51:39.360,arm,feedback,规划中: 夹爪闭合
+11:51:39.521,arm,feedback,执行完成: 夹爪闭合
+11:51:39.560,arm,feedback,工件 workpiece_0 已附着到末端
+11:51:39.560,arm,feedback,规划中: 提起工件
+11:51:42.689,task,ABORTED,取料失败: 动作执行失败

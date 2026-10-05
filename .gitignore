@@ -1,0 +1,16 @@
+# ROS2 build artifacts
+build/
+install/
+log/
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+# 编译产物
+*.so
+*.o
+*.a
+# VSCode
+.vscode/
+# 系统文件
+.DS_Store

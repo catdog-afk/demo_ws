@@ -1,0 +1,7 @@
+# 设置料盘槽位占用状态（取料后置空、放回后占用）
+
+uint8 slot      # 槽位编号（从 0 开始）
+bool occupied   # 是否占用
+---
+bool success    # 是否设置成功
+string message  # 结果说明

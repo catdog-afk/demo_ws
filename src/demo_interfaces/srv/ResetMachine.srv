@@ -1,0 +1,4 @@
+# 复位机床工位状态（测试用：重新回到就绪状态）
+---
+bool success    # 是否复位成功
+string message  # 结果说明

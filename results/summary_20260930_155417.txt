@@ -1,0 +1,7 @@
+========== 运行摘要 ==========
+结束状态: ABORTED
+说明: 取料失败: 动作执行失败
+总运行时长: 11.8 秒
+任务经过的状态: IDLE -> PICK -> ABORTED
+事件总数: 38
+CSV 记录: /home/catdog/demo_ws/results/task_log_20260930_155417.csv

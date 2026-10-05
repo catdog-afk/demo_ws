@@ -1,0 +1,46 @@
+time,source,event,detail
+11:40:06.922,task,IDLE,任务状态机就绪
+11:40:06.944,machine,BUSY,BUSY
+11:40:11.925,task,PICK,任务启动，目标槽位 0
+11:40:11.942,task,WAIT_STATION,工位忙碌，等待空闲后开始取料
+11:41:53.152,task,IDLE,任务状态机就绪
+11:41:53.197,machine,BUSY,BUSY
+11:41:53.297,machine,BUSY,BUSY
+11:41:53.398,machine,BUSY,BUSY
+11:41:53.498,machine,BUSY,BUSY
+11:41:53.598,machine,BUSY,BUSY
+11:41:53.698,machine,BUSY,BUSY
+11:41:53.797,machine,BUSY,BUSY
+11:41:53.897,machine,BUSY,BUSY
+11:41:53.997,machine,BUSY,BUSY
+11:41:54.098,machine,BUSY,BUSY
+11:41:54.198,machine,BUSY,BUSY
+11:41:54.297,machine,BUSY,BUSY
+11:41:54.398,machine,BUSY,BUSY
+11:41:54.498,machine,BUSY,BUSY
+11:41:54.598,machine,BUSY,BUSY
+11:41:54.698,machine,BUSY,BUSY
+11:41:54.798,machine,BUSY,BUSY
+11:41:54.897,machine,BUSY,BUSY
+11:41:54.998,machine,BUSY,BUSY
+11:41:55.098,machine,BUSY,BUSY
+11:41:55.198,machine,BUSY,BUSY
+11:41:55.298,machine,BUSY,BUSY
+11:41:55.398,machine,BUSY,BUSY
+11:41:55.497,machine,BUSY,BUSY
+11:41:55.598,machine,BUSY,BUSY
+11:41:55.697,machine,BUSY,BUSY
+11:41:55.798,machine,BUSY,BUSY
+11:41:55.898,machine,BUSY,BUSY
+11:41:55.998,machine,BUSY,BUSY
+11:41:56.143,task,PICK,工位已空闲，开始取料
+11:41:56.242,arm,feedback,取料：槽位 0 -> 预抓取点
+11:41:56.242,arm,feedback,取料：槽位 0 -> 预抓取点
+11:41:56.243,arm,feedback,规划中: 预抓取点(槽位0)
+11:41:56.243,arm,feedback,规划中: 预抓取点(槽位0)
+11:41:58.155,task,PICK,任务启动，目标槽位 0
+11:42:06.288,arm,feedback,取料：槽位 0 -> 预抓取点
+11:42:06.289,arm,feedback,规划中: 预抓取点(槽位0)
+11:42:06.290,arm,feedback,取料：槽位 0 -> 预抓取点
+11:42:06.291,arm,feedback,规划中: 预抓取点(槽位0)
+11:42:06.343,task,ABORTED,取料失败: 动作执行失败

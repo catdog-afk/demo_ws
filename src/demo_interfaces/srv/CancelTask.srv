@@ -1,0 +1,4 @@
+# 取消当前任务
+---
+bool success    # 是否成功取消
+string message  # 结果说明

@@ -1,0 +1,422 @@
+time,source,event,detail
+12:05:44.105,task,IDLE,任务状态机就绪
+12:05:44.287,machine,BUSY,BUSY
+12:05:44.388,machine,BUSY,BUSY
+12:05:44.488,machine,BUSY,BUSY
+12:05:44.588,machine,BUSY,BUSY
+12:05:44.687,machine,BUSY,BUSY
+12:05:44.788,machine,BUSY,BUSY
+12:05:44.888,machine,BUSY,BUSY
+12:05:44.988,machine,BUSY,BUSY
+12:05:45.087,machine,BUSY,BUSY
+12:05:45.188,machine,BUSY,BUSY
+12:05:45.288,machine,BUSY,BUSY
+12:05:45.388,machine,BUSY,BUSY
+12:05:45.488,machine,BUSY,BUSY
+12:05:45.588,machine,BUSY,BUSY
+12:05:45.688,machine,BUSY,BUSY
+12:05:45.788,machine,BUSY,BUSY
+12:05:45.888,machine,BUSY,BUSY
+12:05:45.988,machine,BUSY,BUSY
+12:05:46.088,machine,BUSY,BUSY
+12:05:46.188,machine,BUSY,BUSY
+12:05:46.287,machine,BUSY,BUSY
+12:05:46.388,machine,BUSY,BUSY
+12:05:46.488,machine,BUSY,BUSY
+12:05:46.588,machine,BUSY,BUSY
+12:05:46.688,machine,BUSY,BUSY
+12:05:46.788,machine,BUSY,BUSY
+12:05:46.888,machine,BUSY,BUSY
+12:05:46.987,machine,BUSY,BUSY
+12:05:47.088,machine,BUSY,BUSY
+12:05:47.188,machine,BUSY,BUSY
+12:05:47.288,machine,BUSY,BUSY
+12:05:47.388,machine,BUSY,BUSY
+12:05:47.488,machine,BUSY,BUSY
+12:05:47.588,machine,BUSY,BUSY
+12:05:47.688,machine,BUSY,BUSY
+12:05:47.788,machine,BUSY,BUSY
+12:05:47.888,machine,BUSY,BUSY
+12:05:47.987,machine,BUSY,BUSY
+12:05:48.087,machine,BUSY,BUSY
+12:05:48.188,machine,BUSY,BUSY
+12:05:48.288,machine,BUSY,BUSY
+12:05:48.388,machine,BUSY,BUSY
+12:05:48.488,machine,BUSY,BUSY
+12:05:48.588,machine,BUSY,BUSY
+12:05:48.688,machine,BUSY,BUSY
+12:05:48.788,machine,BUSY,BUSY
+12:05:48.888,machine,BUSY,BUSY
+12:05:48.988,machine,BUSY,BUSY
+12:05:49.088,machine,BUSY,BUSY
+12:05:49.106,task,PICK,任务启动，目标槽位 0
+12:05:49.187,task,WAIT_STATION,工位忙碌，等待空闲后开始取料
+12:05:49.187,machine,BUSY,BUSY
+12:05:49.288,machine,BUSY,BUSY
+12:05:49.388,machine,BUSY,BUSY
+12:05:49.488,machine,BUSY,BUSY
+12:05:49.588,machine,BUSY,BUSY
+12:05:49.688,machine,BUSY,BUSY
+12:05:49.788,machine,BUSY,BUSY
+12:05:49.888,machine,BUSY,BUSY
+12:05:49.988,machine,BUSY,BUSY
+12:05:50.088,machine,BUSY,BUSY
+12:05:50.189,machine,BUSY,BUSY
+12:05:50.288,machine,BUSY,BUSY
+12:05:50.388,machine,BUSY,BUSY
+12:05:50.488,machine,BUSY,BUSY
+12:05:50.588,machine,BUSY,BUSY
+12:05:50.688,machine,BUSY,BUSY
+12:05:50.788,machine,BUSY,BUSY
+12:05:50.888,machine,BUSY,BUSY
+12:05:50.988,machine,BUSY,BUSY
+12:05:51.088,machine,BUSY,BUSY
+12:05:51.188,machine,BUSY,BUSY
+12:05:51.288,machine,BUSY,BUSY
+12:05:51.388,machine,BUSY,BUSY
+12:05:51.487,machine,BUSY,BUSY
+12:05:51.588,machine,BUSY,BUSY
+12:05:51.688,machine,BUSY,BUSY
+12:05:51.788,machine,BUSY,BUSY
+12:05:51.888,machine,BUSY,BUSY
+12:05:51.988,machine,BUSY,BUSY
+12:05:52.088,machine,BUSY,BUSY
+12:05:52.188,machine,BUSY,BUSY
+12:05:52.288,machine,BUSY,BUSY
+12:05:52.388,machine,BUSY,BUSY
+12:05:52.488,machine,BUSY,BUSY
+12:05:52.588,machine,BUSY,BUSY
+12:05:52.688,machine,BUSY,BUSY
+12:05:52.788,machine,BUSY,BUSY
+12:05:52.888,machine,BUSY,BUSY
+12:05:52.988,machine,BUSY,BUSY
+12:05:53.088,machine,BUSY,BUSY
+12:05:53.188,machine,BUSY,BUSY
+12:05:53.288,machine,BUSY,BUSY
+12:05:53.388,machine,BUSY,BUSY
+12:05:53.488,machine,BUSY,BUSY
+12:05:53.588,machine,BUSY,BUSY
+12:05:53.687,machine,BUSY,BUSY
+12:05:53.788,machine,BUSY,BUSY
+12:05:53.888,machine,BUSY,BUSY
+12:05:53.988,machine,BUSY,BUSY
+12:05:54.088,machine,BUSY,BUSY
+12:05:54.188,machine,BUSY,BUSY
+12:05:54.288,machine,BUSY,BUSY
+12:05:54.387,machine,BUSY,BUSY
+12:05:54.487,machine,BUSY,BUSY
+12:05:54.587,machine,BUSY,BUSY
+12:05:54.688,machine,BUSY,BUSY
+12:05:54.788,machine,BUSY,BUSY
+12:05:54.888,machine,BUSY,BUSY
+12:05:54.989,machine,BUSY,BUSY
+12:05:55.088,machine,BUSY,BUSY
+12:05:55.188,machine,BUSY,BUSY
+12:05:55.288,machine,BUSY,BUSY
+12:05:55.388,machine,BUSY,BUSY
+12:05:55.488,machine,BUSY,BUSY
+12:05:55.588,machine,BUSY,BUSY
+12:05:55.688,machine,BUSY,BUSY
+12:05:55.788,machine,BUSY,BUSY
+12:05:55.888,machine,BUSY,BUSY
+12:05:55.987,machine,BUSY,BUSY
+12:05:56.088,machine,BUSY,BUSY
+12:05:56.188,machine,BUSY,BUSY
+12:05:56.288,machine,BUSY,BUSY
+12:05:56.388,machine,BUSY,BUSY
+12:05:56.489,machine,BUSY,BUSY
+12:05:56.588,machine,BUSY,BUSY
+12:05:56.688,machine,BUSY,BUSY
+12:05:56.788,machine,BUSY,BUSY
+12:05:56.888,machine,BUSY,BUSY
+12:05:56.988,machine,BUSY,BUSY
+12:05:57.088,machine,BUSY,BUSY
+12:05:57.188,machine,BUSY,BUSY
+12:05:57.288,machine,BUSY,BUSY
+12:05:57.388,machine,BUSY,BUSY
+12:05:57.488,machine,BUSY,BUSY
+12:05:57.588,machine,BUSY,BUSY
+12:05:57.689,machine,BUSY,BUSY
+12:05:57.788,machine,BUSY,BUSY
+12:05:57.888,machine,BUSY,BUSY
+12:05:57.988,machine,BUSY,BUSY
+12:05:58.088,machine,BUSY,BUSY
+12:05:58.188,machine,BUSY,BUSY
+12:05:58.288,machine,BUSY,BUSY
+12:05:58.388,machine,BUSY,BUSY
+12:05:58.489,machine,BUSY,BUSY
+12:05:58.588,machine,BUSY,BUSY
+12:05:58.688,machine,BUSY,BUSY
+12:05:58.788,machine,BUSY,BUSY
+12:05:58.888,machine,BUSY,BUSY
+12:05:58.988,machine,BUSY,BUSY
+12:05:59.088,machine,BUSY,BUSY
+12:05:59.188,machine,BUSY,BUSY
+12:05:59.288,machine,BUSY,BUSY
+12:05:59.388,machine,BUSY,BUSY
+12:05:59.488,machine,BUSY,BUSY
+12:05:59.588,machine,BUSY,BUSY
+12:05:59.688,machine,BUSY,BUSY
+12:05:59.788,machine,BUSY,BUSY
+12:05:59.888,machine,BUSY,BUSY
+12:05:59.988,machine,BUSY,BUSY
+12:06:00.088,machine,BUSY,BUSY
+12:06:00.189,machine,BUSY,BUSY
+12:06:00.288,machine,BUSY,BUSY
+12:06:00.388,machine,BUSY,BUSY
+12:06:00.488,machine,BUSY,BUSY
+12:06:00.588,machine,BUSY,BUSY
+12:06:00.688,machine,BUSY,BUSY
+12:06:00.788,machine,BUSY,BUSY
+12:06:00.888,machine,BUSY,BUSY
+12:06:00.988,machine,BUSY,BUSY
+12:06:01.088,machine,BUSY,BUSY
+12:06:01.188,machine,BUSY,BUSY
+12:06:01.288,machine,BUSY,BUSY
+12:06:01.388,machine,BUSY,BUSY
+12:06:01.488,machine,BUSY,BUSY
+12:06:01.588,machine,BUSY,BUSY
+12:06:01.688,machine,BUSY,BUSY
+12:06:01.788,machine,BUSY,BUSY
+12:06:01.888,machine,BUSY,BUSY
+12:06:01.988,machine,BUSY,BUSY
+12:06:02.088,machine,BUSY,BUSY
+12:06:02.188,machine,BUSY,BUSY
+12:06:02.288,machine,BUSY,BUSY
+12:06:02.388,machine,BUSY,BUSY
+12:06:02.488,machine,BUSY,BUSY
+12:06:02.588,machine,BUSY,BUSY
+12:06:02.687,machine,BUSY,BUSY
+12:06:02.788,machine,BUSY,BUSY
+12:06:02.888,machine,BUSY,BUSY
+12:06:02.988,machine,BUSY,BUSY
+12:06:03.088,machine,BUSY,BUSY
+12:06:03.188,machine,BUSY,BUSY
+12:06:03.288,machine,BUSY,BUSY
+12:06:03.388,machine,BUSY,BUSY
+12:06:03.489,machine,BUSY,BUSY
+12:06:03.588,machine,BUSY,BUSY
+12:06:03.688,machine,BUSY,BUSY
+12:06:03.788,machine,BUSY,BUSY
+12:06:03.888,machine,BUSY,BUSY
+12:06:03.988,machine,BUSY,BUSY
+12:06:04.089,machine,BUSY,BUSY
+12:06:04.288,task,PICK,工位已空闲，开始取料
+12:06:04.391,arm,feedback,取料：槽位 0 -> 预抓取点
+12:06:04.391,arm,feedback,规划中: 预抓取点(槽位0)
+12:06:07.661,arm,feedback,执行完成: 预抓取点(槽位0)
+12:06:07.662,arm,feedback,规划中: 抓取点(槽位0)
+12:06:10.939,arm,feedback,执行完成: 抓取点(槽位0)
+12:06:10.963,arm,feedback,工件 workpiece_0 已附着到末端
+12:06:10.970,arm,feedback,夹爪闭合
+12:06:10.971,arm,feedback,规划中: 夹爪闭合
+12:06:11.128,arm,feedback,执行完成: 夹爪闭合
+12:06:11.129,arm,feedback,规划中: 提起工件
+12:06:17.569,arm,feedback,执行完成: 提起工件
+12:06:17.588,task,PLACE,取料完成，准备上料
+12:06:17.692,arm,feedback,规划中: 上料预放置点
+12:06:21.868,arm,feedback,执行完成: 上料预放置点
+12:06:21.869,arm,feedback,规划中: 放置点
+12:06:27.857,arm,feedback,执行完成: 放置点
+12:06:27.857,arm,feedback,夹爪张开
+12:06:27.858,arm,feedback,规划中: 夹爪张开
+12:06:28.012,arm,feedback,执行完成: 夹爪张开
+12:06:28.046,arm,feedback,工件已放入加工台，开始等待加工
+12:06:28.046,arm,feedback,规划中: 退出加工台
+12:06:29.406,arm,feedback,执行完成: 退出加工台
+12:06:29.488,task,WAIT_MACHINING,上料完成，等待加工
+12:06:29.489,machine,MACHINING,加工进度 0%
+12:06:29.588,machine,MACHINING,加工进度 2%
+12:06:29.687,machine,MACHINING,加工进度 4%
+12:06:29.788,machine,MACHINING,加工进度 6%
+12:06:29.888,machine,MACHINING,加工进度 8%
+12:06:29.988,machine,MACHINING,加工进度 10%
+12:06:30.088,machine,MACHINING,加工进度 12%
+12:06:30.188,machine,MACHINING,加工进度 14%
+12:06:30.288,machine,MACHINING,加工进度 16%
+12:06:30.388,machine,MACHINING,加工进度 18%
+12:06:30.487,machine,MACHINING,加工进度 20%
+12:06:30.588,machine,MACHINING,加工进度 22%
+12:06:30.688,machine,MACHINING,加工进度 24%
+12:06:30.788,machine,MACHINING,加工进度 26%
+12:06:30.888,machine,MACHINING,加工进度 28%
+12:06:30.988,machine,MACHINING,加工进度 30%
+12:06:31.088,machine,MACHINING,加工进度 32%
+12:06:31.188,machine,MACHINING,加工进度 34%
+12:06:31.288,machine,MACHINING,加工进度 36%
+12:06:31.388,machine,MACHINING,加工进度 38%
+12:06:31.488,machine,MACHINING,加工进度 40%
+12:06:31.588,machine,MACHINING,加工进度 42%
+12:06:31.688,machine,MACHINING,加工进度 44%
+12:06:31.788,machine,MACHINING,加工进度 46%
+12:06:31.888,machine,MACHINING,加工进度 48%
+12:06:31.987,machine,MACHINING,加工进度 50%
+12:06:32.088,machine,MACHINING,加工进度 52%
+12:06:32.188,machine,MACHINING,加工进度 54%
+12:06:32.288,machine,MACHINING,加工进度 56%
+12:06:32.388,machine,MACHINING,加工进度 58%
+12:06:32.488,machine,MACHINING,加工进度 60%
+12:06:32.588,machine,MACHINING,加工进度 62%
+12:06:32.688,machine,MACHINING,加工进度 64%
+12:06:32.788,machine,MACHINING,加工进度 66%
+12:06:32.888,machine,MACHINING,加工进度 68%
+12:06:32.988,machine,MACHINING,加工进度 70%
+12:06:33.088,machine,MACHINING,加工进度 72%
+12:06:33.188,machine,MACHINING,加工进度 74%
+12:06:33.288,machine,MACHINING,加工进度 76%
+12:06:33.389,machine,MACHINING,加工进度 78%
+12:06:33.488,machine,MACHINING,加工进度 80%
+12:06:33.588,machine,MACHINING,加工进度 82%
+12:06:33.688,machine,MACHINING,加工进度 84%
+12:06:33.788,machine,MACHINING,加工进度 86%
+12:06:33.888,machine,MACHINING,加工进度 88%
+12:06:33.988,machine,MACHINING,加工进度 90%
+12:06:34.089,machine,MACHINING,加工进度 92%
+12:06:34.187,machine,MACHINING,加工进度 94%
+12:06:34.288,machine,MACHINING,加工进度 96%
+12:06:34.388,machine,MACHINING,加工进度 98%
+12:06:34.489,machine,DONE,DONE
+12:06:34.588,task,RETRIEVE,加工完成，取回工件
+12:06:34.589,machine,DONE,DONE
+12:06:34.688,machine,DONE,DONE
+12:06:34.691,arm,feedback,规划中: 取回预抓取点
+12:06:34.788,machine,DONE,DONE
+12:06:34.888,machine,DONE,DONE
+12:06:34.987,machine,DONE,DONE
+12:06:35.088,machine,DONE,DONE
+12:06:35.188,machine,DONE,DONE
+12:06:35.288,machine,DONE,DONE
+12:06:35.388,machine,DONE,DONE
+12:06:35.488,machine,DONE,DONE
+12:06:35.588,machine,DONE,DONE
+12:06:35.688,machine,DONE,DONE
+12:06:35.788,machine,DONE,DONE
+12:06:35.887,machine,DONE,DONE
+12:06:35.988,machine,DONE,DONE
+12:06:36.088,machine,DONE,DONE
+12:06:36.188,machine,DONE,DONE
+12:06:36.288,machine,DONE,DONE
+12:06:36.388,machine,DONE,DONE
+12:06:36.487,machine,DONE,DONE
+12:06:36.588,machine,DONE,DONE
+12:06:36.688,machine,DONE,DONE
+12:06:36.788,machine,DONE,DONE
+12:06:36.888,machine,DONE,DONE
+12:06:36.988,machine,DONE,DONE
+12:06:37.088,machine,DONE,DONE
+12:06:37.188,machine,DONE,DONE
+12:06:37.288,machine,DONE,DONE
+12:06:37.389,machine,DONE,DONE
+12:06:37.488,machine,DONE,DONE
+12:06:37.588,machine,DONE,DONE
+12:06:37.629,arm,feedback,执行完成: 取回预抓取点
+12:06:37.631,arm,feedback,规划中: 取回抓取点
+12:06:37.688,machine,DONE,DONE
+12:06:37.788,machine,DONE,DONE
+12:06:37.888,machine,DONE,DONE
+12:06:37.988,machine,DONE,DONE
+12:06:38.088,machine,DONE,DONE
+12:06:38.188,machine,DONE,DONE
+12:06:38.288,machine,DONE,DONE
+12:06:38.388,machine,DONE,DONE
+12:06:38.488,machine,DONE,DONE
+12:06:38.588,machine,DONE,DONE
+12:06:38.688,machine,DONE,DONE
+12:06:38.788,machine,DONE,DONE
+12:06:38.888,machine,DONE,DONE
+12:06:38.988,machine,DONE,DONE
+12:06:39.088,machine,DONE,DONE
+12:06:39.188,machine,DONE,DONE
+12:06:39.289,machine,DONE,DONE
+12:06:39.388,machine,DONE,DONE
+12:06:39.488,machine,DONE,DONE
+12:06:39.588,machine,DONE,DONE
+12:06:39.688,machine,DONE,DONE
+12:06:39.788,machine,DONE,DONE
+12:06:39.888,machine,DONE,DONE
+12:06:39.988,machine,DONE,DONE
+12:06:40.088,machine,DONE,DONE
+12:06:40.188,machine,DONE,DONE
+12:06:40.288,machine,DONE,DONE
+12:06:40.388,machine,DONE,DONE
+12:06:40.488,machine,DONE,DONE
+12:06:40.588,machine,DONE,DONE
+12:06:40.688,machine,DONE,DONE
+12:06:40.788,machine,DONE,DONE
+12:06:40.867,arm,feedback,执行完成: 取回抓取点
+12:06:40.888,machine,DONE,DONE
+12:06:40.912,arm,feedback,工件已从加工台取回并附着
+12:06:40.913,arm,feedback,夹爪闭合
+12:06:40.914,arm,feedback,规划中: 夹爪闭合
+12:06:40.987,machine,DONE,DONE
+12:06:41.069,arm,feedback,执行完成: 夹爪闭合
+12:06:41.071,arm,feedback,规划中: 取回提起
+12:06:41.088,machine,DONE,DONE
+12:06:41.188,machine,DONE,DONE
+12:06:41.287,machine,DONE,DONE
+12:06:41.388,machine,DONE,DONE
+12:06:41.488,machine,DONE,DONE
+12:06:41.588,machine,DONE,DONE
+12:06:41.688,machine,DONE,DONE
+12:06:41.788,machine,DONE,DONE
+12:06:41.888,machine,DONE,DONE
+12:06:41.988,machine,DONE,DONE
+12:06:42.088,machine,DONE,DONE
+12:06:42.188,machine,DONE,DONE
+12:06:42.288,machine,DONE,DONE
+12:06:42.388,machine,DONE,DONE
+12:06:42.488,machine,DONE,DONE
+12:06:42.588,machine,DONE,DONE
+12:06:42.688,machine,DONE,DONE
+12:06:42.788,machine,DONE,DONE
+12:06:42.888,machine,DONE,DONE
+12:06:42.988,machine,DONE,DONE
+12:06:43.088,machine,DONE,DONE
+12:06:43.187,machine,DONE,DONE
+12:06:43.288,machine,DONE,DONE
+12:06:43.388,machine,DONE,DONE
+12:06:43.487,machine,DONE,DONE
+12:06:43.588,machine,DONE,DONE
+12:06:43.687,machine,DONE,DONE
+12:06:43.788,machine,DONE,DONE
+12:06:43.887,machine,DONE,DONE
+12:06:43.988,machine,DONE,DONE
+12:06:44.088,machine,DONE,DONE
+12:06:44.188,machine,DONE,DONE
+12:06:44.288,machine,DONE,DONE
+12:06:44.388,machine,DONE,DONE
+12:06:44.488,machine,DONE,DONE
+12:06:44.588,machine,DONE,DONE
+12:06:44.688,machine,DONE,DONE
+12:06:44.788,machine,DONE,DONE
+12:06:44.888,machine,DONE,DONE
+12:06:44.988,machine,DONE,DONE
+12:06:45.088,machine,DONE,DONE
+12:06:45.188,machine,DONE,DONE
+12:06:45.288,machine,DONE,DONE
+12:06:45.388,machine,DONE,DONE
+12:06:45.487,machine,DONE,DONE
+12:06:45.588,machine,DONE,DONE
+12:06:45.688,machine,DONE,DONE
+12:06:45.788,machine,DONE,DONE
+12:06:45.888,machine,DONE,DONE
+12:06:45.988,machine,DONE,DONE
+12:06:46.087,machine,DONE,DONE
+12:06:46.188,machine,DONE,DONE
+12:06:46.287,machine,DONE,DONE
+12:06:46.387,machine,DONE,DONE
+12:06:46.487,machine,DONE,DONE
+12:06:46.588,machine,DONE,DONE
+12:06:46.590,arm,feedback,执行完成: 取回提起
+12:06:46.689,task,RETURN,取回完成，放回料盘
+12:06:46.791,arm,feedback,规划中: 放回预放置点(槽位0)
+12:06:50.589,arm,feedback,执行完成: 放回预放置点(槽位0)
+12:06:50.591,arm,feedback,规划中: 放回点(槽位0)
+12:06:52.339,arm,feedback,执行完成: 放回点(槽位0)
+12:06:52.340,arm,feedback,夹爪张开
+12:06:52.341,arm,feedback,规划中: 夹爪张开
+12:06:52.496,arm,feedback,执行完成: 夹爪张开
+12:06:52.520,arm,feedback,工件已放回料盘槽位 0
+12:06:52.520,arm,feedback,规划中: 退出料盘
+12:06:57.056,arm,feedback,执行完成: 退出料盘
+12:06:57.089,task,DONE,工件已放回，任务完成

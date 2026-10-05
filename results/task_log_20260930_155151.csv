@@ -1,0 +1,36 @@
+time,source,event,detail
+15:51:45.946,task,IDLE,任务状态机就绪
+15:51:45.982,machine,BUSY,BUSY
+15:51:46.071,machine,BUSY,BUSY
+15:51:46.171,machine,BUSY,BUSY
+15:51:46.270,machine,BUSY,BUSY
+15:51:46.378,machine,BUSY,BUSY
+15:51:46.472,machine,BUSY,BUSY
+15:51:46.571,machine,BUSY,BUSY
+15:51:46.671,machine,BUSY,BUSY
+15:51:46.771,machine,BUSY,BUSY
+15:51:46.872,machine,BUSY,BUSY
+15:51:46.971,machine,BUSY,BUSY
+15:51:47.071,machine,BUSY,BUSY
+15:51:47.171,machine,BUSY,BUSY
+15:51:47.273,machine,BUSY,BUSY
+15:51:47.372,machine,BUSY,BUSY
+15:51:47.471,machine,BUSY,BUSY
+15:51:47.571,machine,BUSY,BUSY
+15:51:47.672,machine,BUSY,BUSY
+15:51:47.771,machine,BUSY,BUSY
+15:51:47.871,machine,BUSY,BUSY
+15:51:47.971,machine,BUSY,BUSY
+15:51:48.071,machine,BUSY,BUSY
+15:51:48.171,machine,BUSY,BUSY
+15:51:48.271,machine,BUSY,BUSY
+15:51:48.371,machine,BUSY,BUSY
+15:51:48.471,machine,BUSY,BUSY
+15:51:48.571,machine,BUSY,BUSY
+15:51:48.671,machine,BUSY,BUSY
+15:51:50.831,task,PICK,任务启动，目标槽位 0
+15:51:50.898,arm,feedback,取料：槽位 0 -> 预抓取点
+15:51:50.899,arm,feedback,取料：槽位 0 -> 预抓取点
+15:51:50.900,arm,feedback,规划中: 预抓取点(槽位0)
+15:51:50.901,arm,feedback,规划中: 预抓取点(槽位0)
+15:51:51.093,task,ABORTED,取料失败: 动作执行失败

@@ -1,0 +1,8 @@
+# 机械臂动作指令
+# command 取值：home / open / close / pick / place / retrieve / return
+
+string command  # 指令名称
+uint8 slot      # 料盘槽位编号（pick / return 指令使用）
+---
+bool success    # 动作是否成功执行
+string message  # 执行结果说明

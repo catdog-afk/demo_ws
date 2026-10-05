@@ -1,0 +1,7 @@
+========== 运行摘要 ==========
+结束状态: DONE
+说明: 工件已放回，任务完成
+总运行时长: 448.1 秒
+任务经过的状态: IDLE -> PICK -> PLACE -> WAIT_MACHINING -> RETRIEVE -> RETURN -> DONE
+事件总数: 190
+CSV 记录: /home/catdog/demo_ws/results/task_log_20260930_160515.csv
