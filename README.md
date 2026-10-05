@@ -32,13 +32,14 @@ ros2 launch machining_demo demo.launch.py
 ```
 
 启动后 RViz 自动打开，任务 **5 秒后自动开始**，依次展示：
-机床忙碌（3s）→ 等待空闲 → 取料 → 上料 → 加工（5s，显示进度）→ 取回 → 放回料盘 → 完成。
+机床忙碌（初始 10s）→ 等待空闲 → 取料 → 上料 → 加工（5s，显示进度）→ 取回 → 放回原槽位 → 回零成功 → 完成。
 运行记录自动保存到 `~/demo_ws/results/`。
 
 > ⚠️ **一次只能运行一个演示实例**。重复启动会导致控制器重复加载、
 > `/move_action` 动作名冲突，机械臂报"取料失败"。
-> 重启请用：`bash ~/demo_ws/restart_demo.sh`（自动清理旧实例后再启动，
-> 可附加 launch 参数，如 `bash ~/demo_ws/restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0`）。
+> 推荐从第一次启动就使用当前仓库的 `bash restart_demo.sh`。脚本只清理自己管理的演示进程组，
+> 再启动当前仓库的构建结果；可附加 launch 参数，如 `bash restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0`。
+> 手动 `ros2 launch` 启动的旧实例，需要先在原终端按 Ctrl+C 退出。
 > 另外注意：电脑休眠唤醒后 ROS 进程会失去 DDS 发现能力（服务调用卡在
 > "waiting for service"），此时同样用 restart_demo.sh 重启即可。
 
@@ -48,9 +49,13 @@ ros2 launch machining_demo demo.launch.py
 |------|------|------|
 | `auto_start` | true | 是否自动开始演示 |
 | `slot` | 0 | 取料槽位 0~2 |
-| `initial_busy_sec` | 3.0 | 机床初始忙碌时长（拓展：忙碌等待） |
+| `auto_start_delay` | 5.0 | 自动启动延迟（秒） |
+| `initial_busy_sec` | 10.0 | 机床初始忙碌时长，便于观察忙碌等待阶段 |
 | `machining_sec` | 5.0 | 模拟加工时长 |
 | `machining_timeout` | 8.0 | 加工超时阈值（拓展：超时提示） |
+| `timeout_retry_once` | true | 超时后延长一次等待窗口，不重新开始加工 |
+| `station_timeout` | 30.0 | 等待场景、服务、工位 READY 的超时阈值 |
+| `arm_call_timeout` | 660.0 | 整个取放动作服务的超时阈值，包含多段规划与执行 |
 | `use_rviz` | true | 是否启动 RViz |
 | `results_dir` | ~/demo_ws/results | 运行记录输出目录 |
 
@@ -60,7 +65,17 @@ ros2 launch machining_demo demo.launch.py
 ros2 launch machining_demo demo.launch.py machining_sec:=15.0 machining_timeout:=8.0
 ```
 
-（加工 8 秒时触发超时警告，任务等待重试一次后正常完成。）
+（等待加工 8 秒时触发超时警告，警告停留至少 1 秒；延长一次等待窗口后正常完成。）
+
+演示“持续超时中止”：
+
+```bash
+ros2 launch machining_demo demo.launch.py machining_sec:=30.0 machining_timeout:=4.0
+```
+
+第二次超时后进入 `ABORTED`。取消或中止后不自动启动新任务，保留工件位置供检查，
+应先退出原演示再重新启动。`/machine/reset` 在工件仍在位或正在加工时拒绝复位，避免伪造工位空闲。
+`/task/cancel` 在当前动作结束并确认占用更新后生效；服务请求超时不会停止远端机械臂运动。
 
 ### 手动控制（可选）
 
@@ -71,11 +86,39 @@ ros2 service call /machine/reset demo_interfaces/srv/ResetMachine "{}"   # 复�
 ros2 topic echo /task/state                                              # 查看任务状态
 ```
 
-### 自动化测试（正常流程跑通校验）
+### 自动化测试
+
+离线回归测试（Python 3.10+，不要求安装 ROS）：
 
 ```bash
-ros2 run machining_demo demo_test
+python -m unittest discover -s tests -v
 ```
+
+测试执行真实节点回调，替换 ROS 消息、时钟与服务传输，覆盖状态机、超时、取消、
+工件坐标与逐轮记录。该测试不验证 DDS 通信、碰撞检测或实际 MoveIt 轨迹。
+
+ROS 集成验收需要两个终端；第一个终端禁止自动启动，第二个终端发起本次任务：
+
+```bash
+# 终端 1
+ros2 launch machining_demo demo.launch.py auto_start:=false
+```
+
+```bash
+# 终端 2（先 source install/setup.bash）
+ros2 run machining_demo demo_test --ros-args -p slot:=1
+```
+
+测试必须观察本轮全部核心阶段，且找到本轮新生成、槽位匹配的 CSV 和摘要，
+不会使用仓库自带的旧日志判定成功。自定义 `results_dir` 时，第二个终端须传相同的 `-p output_dir:=...`。
+
+超时后完成场景：终端 1 增加 `machining_sec:=15.0 machining_timeout:=8.0`，
+终端 2 增加 `-p require_timeout:=true`。
+持续超时场景：终端 1 增加 `machining_sec:=30.0 machining_timeout:=4.0`，
+终端 2 增加 `-p expected_final:=ABORTED -p require_timeout:=true`。
+
+每次条件变化前退出并重新启动演示；正常任务完成后可在同一实例重复运行不同槽位。
+GitHub Actions 自动执行离线回归测试，ROS/MoveIt 集成验收需在 Ubuntu 22.04 + ROS2 Humble 上另行执行。
 
 ### 录制演示视频
 
@@ -113,7 +156,7 @@ ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -pres
 
 | 接口 | 类型 | 方向 | 说明 |
 |------|------|------|------|
-| `/task/state` | 话题 TaskState | task_manager → 全局 | 任务状态机状态（9 种状态 + 说明文字） |
+| `/task/state` | 话题 TaskState | task_manager → 全局 | 任务状态机状态（10 种状态 + 槽位 + 说明文字，保留最新状态） |
 | `/machine/status` | 话题 MachineStatus | machine → task/recorder | 工位信号（READY/BUSY/MACHINING/DONE + 进度） |
 | `/machine/workpiece_present` | 话题 Bool | arm → machine | 工件在位信号 |
 | `/tray/occupancy` | 话题 TrayOccupancy | scene → 全局 | 料盘槽位占用 |
@@ -126,10 +169,11 @@ ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -pres
 **任务状态机**：
 
 ```
-IDLE → WAIT_STATION(工位忙碌等待) → PICK(取料) → PLACE(上料) → WAIT_MACHINING(等加工)
-     → RETRIEVE(取回) → RETURN(放回) → DONE → IDLE
+IDLE → WAIT_STATION(场景/服务/工位就绪等待) → PICK(取料) → PLACE(上料) → WAIT_MACHINING(等加工)
+     → RETRIEVE(取回) → RETURN(放回、确认料盘占用、回零) → DONE → IDLE
      任意状态 --取消/异常--> ABORTED
-     WAIT_MACHINING --超时--> TIMEOUT(警告, 重试一次) --> ABORTED
+     WAIT_MACHINING --首次超时--> TIMEOUT(警告) → WAIT_MACHINING(延长一次等待)
+     WAIT_MACHINING --第二次超时--> ABORTED
 ```
 
 ## 三、自行完成的核心逻辑
@@ -137,7 +181,8 @@ IDLE → WAIT_STATION(工位忙碌等待) → PICK(取料) → PLACE(上料) →
 1. **任务流程状态机**（task_manager.py）——任务状态切换、工位忙碌等待、加工超时提示与重试、取消/异常处理；
 2. **工位信号模拟**（machine_simulator.py）——机床状态机（忙碌→就绪→加工→完成）与进度发布；
 3. **上下料动作流程**（arm_controller.py）——取料/上料/取回/放回的完整动作编排，工件附着与分离；
-4. **运行记录**（result_recorder.py）——全流程事件 CSV 记录 + 摘要文件，保证"演示可复现、结果可保存"。
+4. **运行记录**（result_recorder.py）——每轮任务独立生成带槽位的 CSV 与摘要，执行中即时刷新，关闭节点时保留未完成证据；
+5. **验收规则与回归测试**（evidence.py、tests/）——校验 A2 核心阶段完整性，验证忙碌、信号中断、超时和取消等条件变化。
 
 ## 四、复用的开源资源（来源声明）
 
@@ -167,7 +212,24 @@ demo_ws/
 └── src/
     ├── demo_interfaces/       # 自定义话题/服务接口（3 msg + 5 srv）
     └── machining_demo/        # 主功能包
-        ├── machining_demo/    # 5 个功能节点 + 共享布局 layout.py + 测试脚本
+        ├── machining_demo/    # 5 个功能节点 + 共享布局/验收规则 + 集成测试脚本
         ├── launch/demo.launch.py
         └── rviz/machining_demo.rviz
 ```
+
+## 七、PPT A2 验收对应关系
+
+依据课程作业 PPT 第 3 页最低技术要求、第 6 页 A2 题目及第 14 页汇报要求：
+
+| 要求 | 实现与验收证据 |
+|------|----------------|
+| 从料盘取料、上料、等待加工、取回 | `PICK → PLACE → WAIT_MACHINING → RETRIEVE → RETURN → DONE`，回到原槽位并确认回零 |
+| 展示各阶段状态 | `/task/state`、`/machine/status`、RViz 状态标注和每轮 CSV |
+| 工位信号、机械臂和夹爪控制 | 独立 machine/arm/task 节点，工件在位 Bool，MoveGroup 与夹爪规划组 |
+| 至少两个 ROS 功能节点，有自行开发逻辑 | 五个功能节点、自定义 msg/srv、任务状态机、工位模拟和结果记录 |
+| 从启动到结束可复现、保存运行记录 | 一键 launch、逐轮 CSV/摘要、正常和超时的集成验收命令 |
+| 补充一次条件变化或失败处理 | 忙碌等待、加工超时提示、持续超时中止及任务取消 |
+| 注明开源来源及本人工作 | 第三、四、五节；实际成员姓名和贡献由小组填写 |
+
+建议视频连续展示默认完整循环，再展示一次超时条件变化。源码已提供，最终汇报 PPT 和
+视频仍需小组结合实际 Ubuntu 仿真运行录制。仓库既有 `results/` 为历史数据，不代表本次修改的仿真验收结果。

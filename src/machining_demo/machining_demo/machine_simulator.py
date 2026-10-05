@@ -15,6 +15,8 @@
 服务：
     /machine/reset             复位为就绪状态（测试用）
 """
+import math
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Bool
@@ -32,9 +34,14 @@ READY, BUSY, MACHINING, DONE = 0, 1, 2, 3
 class MachineSimulator(Node):
     def __init__(self):
         super().__init__('machine_simulator')
-        self.declare_parameter('initial_busy_sec', 3.0)
+        self.declare_parameter('initial_busy_sec', 10.0)
         self.declare_parameter('machining_sec', 5.0)
         self.declare_parameter('publish_rate', 10.0)
+
+        for name in ('machining_sec', 'publish_rate', 'initial_busy_sec'):
+            value = self.get_parameter(name).value
+            if not math.isfinite(value) or value < 0 or (name != 'initial_busy_sec' and value == 0):
+                raise ValueError('%s 参数不合法' % name)
 
         self.state = BUSY
         self.progress = 0.0
@@ -69,6 +76,10 @@ class MachineSimulator(Node):
         self.workpiece_present = msg.data
 
     def _reset_cb(self, request, response):
+        if self.workpiece_present or self.state == MACHINING:
+            response.success = False
+            response.message = '工件仍在工位或正在加工，不能复位；请先检查并取走工件'
+            return response
         self.state = READY
         self.progress = 0.0
         self.workpiece_present = False
@@ -96,6 +107,13 @@ class MachineSimulator(Node):
                 self._log('开始加工（预计 %.0f 秒）',
                           self.get_parameter('machining_sec').value)
         elif self.state == MACHINING:
+            if not self.workpiece_present:
+                self.state = READY
+                self.progress = 0.0
+                self._state_start = now
+                self._log('工件在加工期间被取走，本次加工中断')
+                self._publish_status()
+                return
             total = self.get_parameter('machining_sec').value
             self.progress = min(100.0, 100.0 * elapsed / total)
             if elapsed >= total:
@@ -106,6 +124,7 @@ class MachineSimulator(Node):
         elif self.state == DONE:
             if not self.workpiece_present:
                 self.state = READY
+                self.progress = 0.0
                 self._state_start = now
                 self._log('工件取走，工位重新就绪')
 
@@ -127,6 +146,7 @@ class MachineSimulator(Node):
         marker.id = 0
         marker.type = Marker.TEXT_VIEW_FACING
         marker.action = Marker.ADD
+        marker.pose.orientation.w = 1.0
         x, y = layout.MACHINE['pos'][:2]
         marker.pose.position.x = x
         marker.pose.position.y = y

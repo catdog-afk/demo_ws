@@ -31,7 +31,7 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from std_msgs.msg import Bool, String
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Pose, Quaternion
+from geometry_msgs.msg import Pose
 
 from shape_msgs.msg import SolidPrimitive
 from moveit_msgs.msg import (MotionPlanRequest, PlanningOptions, Constraints,
@@ -113,12 +113,13 @@ class ArmController(Node):
 
     def _wait_ready(self):
         """等待 move_group 动作服务与关节状态就绪。"""
-        deadline = time.time() + 60.0
-        while rclpy.ok() and time.time() < deadline:
+        deadline = time.monotonic() + 60.0
+        while rclpy.ok() and time.monotonic() < deadline:
             with self._joint_lock:
                 arm_ready = all(j in self._joint_positions
                                 for j in ARM_JOINTS + FINGER_JOINTS)
-            if self._action_client.server_is_ready() and arm_ready:
+            if (self._action_client.server_is_ready() and
+                    self._scene_client.service_is_ready() and arm_ready):
                 return True
             time.sleep(0.2)
         self.get_logger().error('等待 move_group / joint_states 就绪超时')
@@ -252,8 +253,8 @@ class ArmController(Node):
         goal.planning_options = PlanningOptions(replan=True)
 
         future = self._action_client.send_goal_async(goal)
-        deadline = time.time() + 10.0
-        while rclpy.ok() and not future.done() and time.time() < deadline:
+        deadline = time.monotonic() + 10.0
+        while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.05)
         if not future.done() or not future.result().accepted:
             self.get_logger().error('move_group 未接受目标: %s' % name)
@@ -261,8 +262,8 @@ class ArmController(Node):
         goal_handle = future.result()
 
         result_future = goal_handle.get_result_async()
-        deadline = time.time() + 90.0
-        while rclpy.ok() and not result_future.done() and time.time() < deadline:
+        deadline = time.monotonic() + 90.0
+        while rclpy.ok() and not result_future.done() and time.monotonic() < deadline:
             time.sleep(0.05)
         if not result_future.done():
             self.get_logger().error('动作超时: %s' % name)
@@ -284,8 +285,8 @@ class ArmController(Node):
         req = ApplyPlanningScene.Request()
         req.scene = scene
         future = self._scene_client.call_async(req)
-        deadline = time.time() + 10.0
-        while rclpy.ok() and not future.done() and time.time() < deadline:
+        deadline = time.monotonic() + 10.0
+        while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.02)
         if not future.done() or not future.result().success:
             self.get_logger().error('场景更新失败')
@@ -314,7 +315,7 @@ class ArmController(Node):
         attach_pose.position.z = float(layout.ATTACH_Z_OFFSET)
         attach_pose.orientation.w = 1.0
         co.primitive_poses = [attach_pose]
-        co.pose = attach_pose
+        co.pose.orientation.w = 1.0
         aco.object = co
         scene.robot_state.attached_collision_objects = [aco]
         return self._apply_scene(scene)
@@ -347,7 +348,7 @@ class ArmController(Node):
         pose.position.z = world_xyz[2]
         pose.orientation.w = 1.0
         co.primitive_poses = [pose]
-        co.pose = pose
+        co.pose.orientation.w = 1.0
         scene.world.collision_objects = [co]
         return self._apply_scene(scene)
 
@@ -374,12 +375,18 @@ class ArmController(Node):
         if slot >= layout.NUM_SLOTS:
             self.get_logger().error('槽位 %d 超出范围' % slot)
             return False
+        if self._attached_name is not None or self._machine_workpiece is not None:
+            self.get_logger().error('已有工件在夹爪或加工台，不能重复取料')
+            return False
         x, y, z = layout.slot_xyz(slot)
         name = layout.workpiece_name(slot)
         approach = make_pose(x, y, z + layout.APPROACH_HEIGHT)
         grasp = make_pose(x, y, z + layout.GRASP_Z_OFFSET)
 
         self._status('取料：槽位 %d -> 预抓取点' % slot)
+        # 上一轮结束时夹爪可能仍闭合，先张开再靠近工件。
+        if not self._gripper(open_=True):
+            return False
         if not self._goto_pose(approach, '预抓取点(槽位%d)' % slot):
             return False
         if not self._goto_pose(grasp, '抓取点(槽位%d)' % slot):
@@ -436,15 +443,7 @@ class ArmController(Node):
             return False
         if not self._goto_pose(grasp, '取回抓取点'):
             return False
-        # 从世界移除并附着到末端（先附着再闭合，同取料逻辑）
-        scene = PlanningScene()
-        scene.is_diff = True
-        remove_obj = CollisionObject()
-        remove_obj.id = name
-        remove_obj.operation = CollisionObject.REMOVE
-        scene.world.collision_objects = [remove_obj]
-        if not self._apply_scene(scene):
-            return False
+        # MoveIt 附着操作同时移除世界物体，避免两次更新之间丢失工件。
         if not self._attach_workpiece(name):
             return False
         self._attached_name = name
