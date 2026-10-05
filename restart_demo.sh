@@ -1,19 +1,53 @@
-#!/bin/bash
-# A2 演示一键重启：先彻底清理旧实例，再启动新的（避免多实例冲突导致"取料失败"）
-# 用法: bash ~/demo_ws/restart_demo.sh [可选 launch 参数]
-#   例: bash ~/demo_ws/restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0
+#!/usr/bin/env bash
+# 重启由本脚本管理的 A2 演示；从任意目录调用，使用当前仓库的 install。
+set -euo pipefail
+workspace_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+pid_file="$workspace_dir/.demo.pid"
 
-echo ">> 清理旧演示进程..."
-pkill -9 -f "ros2 launch machining_dem[o]" 2>/dev/null || true
-pkill -9 -f "install/machining_dem[o]" 2>/dev/null || true
-pkill -9 -f "moveit_ros_move_grou[p]" 2>/dev/null || true
-pkill -9 -f "ros2_control_nod[e]" 2>/dev/null || true
-pkill -9 -f "controller_manage[r]" 2>/dev/null || true
-pkill -9 -f "robot_state_publishe[r]" 2>/dev/null || true
-pkill -9 -f "rviz[2]" 2>/dev/null || true
-sleep 3
+if [[ ! -f /opt/ros/humble/setup.bash || ! -f "$workspace_dir/install/setup.bash" ]]; then
+    echo '请安装 ROS2 Humble，并先在当前仓库运行 colcon build --symlink-install。' >&2
+    exit 1
+fi
 
-echo ">> 启动演示（Ctrl+C 可退出）..."
+if [[ -f "$pid_file" ]]; then
+    old_pid="$(cat -- "$pid_file")"
+    if [[ "$old_pid" =~ ^[0-9]+$ ]] && kill -0 "$old_pid" 2>/dev/null; then
+        old_command="$(ps -p "$old_pid" -o args=)"
+        old_group="$(ps -p "$old_pid" -o pgid= | tr -d ' ')"
+        if [[ "$old_command" != *'ros2 launch machining_demo demo.launch.py'* || "$old_group" != "$old_pid" ]]; then
+            echo '保存的进程标识与 A2 演示不匹配，未终止任何进程。' >&2
+            exit 1
+        fi
+        echo '>> 结束此前由本脚本启动的 A2 演示...'
+        kill -TERM -- "-$old_pid" 2>/dev/null || true
+        for attempt in {1..30}; do
+            kill -0 -- "-$old_pid" 2>/dev/null || break
+            sleep 0.2
+        done
+        if kill -0 -- "-$old_pid" 2>/dev/null; then
+            kill -KILL -- "-$old_pid" 2>/dev/null || true
+        fi
+    fi
+    rm -f -- "$pid_file"
+fi
+
+set +u
 source /opt/ros/humble/setup.bash
-source ~/demo_ws/install/setup.bash
-ros2 launch machining_demo demo.launch.py "$@"
+source "$workspace_dir/install/setup.bash"
+set -u
+cd -- "$workspace_dir"
+echo '>> 启动 A2 演示（Ctrl+C 可退出）...'
+setsid ros2 launch machining_demo demo.launch.py "$@" &
+demo_pid=$!
+printf '%s\n' "$demo_pid" > "$pid_file"
+
+cleanup() {
+    kill -TERM -- "-$demo_pid" 2>/dev/null || true
+    if [[ -f "$pid_file" && "$(cat -- "$pid_file")" == "$demo_pid" ]]; then
+        rm -f -- "$pid_file"
+    fi
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+wait "$demo_pid"

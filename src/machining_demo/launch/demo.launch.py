@@ -12,7 +12,7 @@
 常用参数：
     auto_start:=true         是否自动开始演示（默认 true，5 秒后自动启动）
     slot:=0                  取料槽位 0~2
-    initial_busy_sec:=3.0    机床初始忙碌时长（演示"忙碌等待"拓展）
+    initial_busy_sec:=10.0   机床初始忙碌时长（演示"忙碌等待"拓展）
     machining_sec:=5.0       加工时长
     machining_timeout:=8.0   加工超时阈值（演示"超时提示"拓展）
     use_rviz:=true           是否启动 RViz
@@ -26,11 +26,15 @@ from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
     use_rviz = LaunchConfiguration('use_rviz')
+
+    def parameter(name, value_type):
+        return ParameterValue(LaunchConfiguration(name), value_type=value_type)
 
     # ---- MoveIt 配置（复用官方 panda 配置包）----
     moveit_config = (
@@ -58,7 +62,7 @@ def generate_launch_description():
     ros2_control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
-        parameters=[os.path.join(
+        parameters=[moveit_config.robot_description, os.path.join(
             get_package_share_directory('moveit_resources_panda_moveit_config'),
             'config', 'ros2_controllers.yaml')],
         remappings=[
@@ -117,17 +121,21 @@ def generate_launch_description():
         package='machining_demo', executable='machine_simulator',
         output='screen',
         parameters=[{
-            'initial_busy_sec': LaunchConfiguration('initial_busy_sec'),
-            'machining_sec': LaunchConfiguration('machining_sec'),
+            'initial_busy_sec': parameter('initial_busy_sec', float),
+            'machining_sec': parameter('machining_sec', float),
         }])
     arm_controller = Node(
         package='machining_demo', executable='arm_controller', output='screen')
     task_manager = Node(
         package='machining_demo', executable='task_manager', output='screen',
         parameters=[{
-            'auto_start': LaunchConfiguration('auto_start'),
-            'slot': LaunchConfiguration('slot'),
-            'machining_timeout': LaunchConfiguration('machining_timeout'),
+            'auto_start': parameter('auto_start', bool),
+            'auto_start_delay': parameter('auto_start_delay', float),
+            'slot': parameter('slot', int),
+            'machining_timeout': parameter('machining_timeout', float),
+            'station_timeout': parameter('station_timeout', float),
+            'arm_call_timeout': parameter('arm_call_timeout', float),
+            'timeout_retry_once': parameter('timeout_retry_once', bool),
         }])
     result_recorder = Node(
         package='machining_demo', executable='result_recorder',
@@ -139,12 +147,20 @@ def generate_launch_description():
                               description='是否自动开始演示'),
         DeclareLaunchArgument('slot', default_value='0',
                               description='取料槽位 0~2'),
-        DeclareLaunchArgument('initial_busy_sec', default_value='3.0',
+        DeclareLaunchArgument('auto_start_delay', default_value='5.0',
+                              description='自动启动延迟（秒）'),
+        DeclareLaunchArgument('initial_busy_sec', default_value='10.0',
                               description='机床初始忙碌时长（秒）'),
         DeclareLaunchArgument('machining_sec', default_value='5.0',
                               description='加工时长（秒）'),
         DeclareLaunchArgument('machining_timeout', default_value='8.0',
                               description='加工超时阈值（秒）'),
+        DeclareLaunchArgument('station_timeout', default_value='30.0',
+                              description='等待工位/场景/服务就绪的超时（秒）'),
+        DeclareLaunchArgument('arm_call_timeout', default_value='660.0',
+                              description='完整取放动作服务超时（秒）'),
+        DeclareLaunchArgument('timeout_retry_once', default_value='true',
+                              description='加工超时后允许延长一次等待窗口'),
         DeclareLaunchArgument('use_rviz', default_value='true',
                               description='是否启动 RViz'),
         DeclareLaunchArgument('results_dir',

@@ -6,10 +6,9 @@
     2. 发布 table / tray / machine 静态 TF 坐标变换；
     3. 维护并发布料盘槽位占用状态（/tray/occupancy），提供设置服务。
 """
-import time
-
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, DurabilityPolicy
 import tf2_ros
 from geometry_msgs.msg import TransformStamped, Pose
 
@@ -39,13 +38,16 @@ class SceneManager(Node):
 
         # 料盘占用状态
         self.occupied = [True] * layout.NUM_SLOTS
-        self.pub_occupancy = self.create_publisher(TrayOccupancy, '/tray/occupancy', 10)
+        latched = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        self.pub_occupancy = self.create_publisher(TrayOccupancy, '/tray/occupancy', latched)
+
+        # 初始化期间主动处理服务响应；场景成功应用后才暴露占用服务。
+        self._build_scene()
         self.srv_occupancy = self.create_service(
             SetOccupancy, '/tray/set_occupancy', self._set_occupancy_cb)
         self.create_timer(1.0, self._publish_occupancy)
 
-        # 构建场景
-        self._build_scene()
+        self._publish_occupancy()
 
     # ---------- 静态 TF ----------
     def _publish_static_tfs(self):
@@ -82,7 +84,8 @@ class SceneManager(Node):
         pose.position.z = xyz[2]
         pose.orientation.w = 1.0
         co.primitive_poses = [pose]
-        co.pose = pose
+        # primitive_poses 相对于 co.pose；对象坐标系必须保持单位变换。
+        co.pose.orientation.w = 1.0
         return co
 
     def _apply(self, scene):
@@ -90,9 +93,9 @@ class SceneManager(Node):
         req = ApplyPlanningScene.Request()
         req.scene = scene
         future = self.scene_client.call_async(req)
-        while rclpy.ok() and not future.done():
-            time.sleep(0.02)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=10.0)
         if not future.done():
+            future.cancel()
             self.get_logger().error('apply_planning_scene 调用失败')
             return False
         return future.result().success
@@ -117,7 +120,7 @@ class SceneManager(Node):
         if self._apply(scene):
             self.get_logger().info('场景构建完成：桌面 + 料盘(3 个工件) + 加工台')
         else:
-            self.get_logger().error('场景构建失败')
+            raise RuntimeError('场景构建失败，禁止启动上下料任务')
 
     # ---------- 料盘占用 ----------
     def _set_occupancy_cb(self, request, response):
