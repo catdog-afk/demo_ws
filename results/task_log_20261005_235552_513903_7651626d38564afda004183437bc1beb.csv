@@ -1,0 +1,13 @@
+time,source,event,detail,slot
+23:55:52.514,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+23:55:52.596,machine,BUSY,BUSY,0
+23:55:57.497,machine,READY,READY,0
+23:55:57.502,task,PICK,工位就绪，从槽位 0 取料,0
+23:55:57.604,arm,feedback,取料：槽位 0 -> 预抓取点,0
+23:55:57.607,arm,feedback,夹爪张开,0
+23:55:57.608,arm,feedback,规划中: 夹爪张开,0
+23:55:57.764,arm,feedback,执行完成: 夹爪张开,0
+23:55:57.767,arm,feedback,规划中: 预抓取点(槽位0),0
+23:56:01.300,arm,feedback,执行完成: 预抓取点(槽位0),0
+23:56:01.302,arm,feedback,规划中: 抓取点(槽位0),0
+23:56:01.601,task,ABORTED,pick失败: 动作执行失败,0

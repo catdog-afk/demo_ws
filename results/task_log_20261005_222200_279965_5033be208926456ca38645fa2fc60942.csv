@@ -1,0 +1,30 @@
+time,source,event,detail,slot
+22:22:00.280,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+22:22:00.302,machine,BUSY,BUSY,0
+22:22:05.203,machine,READY,READY,0
+22:22:05.250,task,PICK,工位就绪，从槽位 0 取料,0
+22:22:05.354,arm,feedback,取料：槽位 0 -> 预抓取点,0
+22:22:05.354,arm,feedback,夹爪张开,0
+22:22:05.355,arm,feedback,规划中: 夹爪张开,0
+22:22:05.509,arm,feedback,执行完成: 夹爪张开,0
+22:22:05.510,arm,feedback,规划中: 预抓取点(槽位0),0
+22:22:11.126,arm,feedback,执行完成: 预抓取点(槽位0),0
+22:22:11.130,arm,feedback,规划中: 抓取点(槽位0),0
+22:22:12.695,arm,feedback,执行完成: 抓取点(槽位0),0
+22:22:12.719,arm,feedback,工件 workpiece_0 已附着到末端,0
+22:22:12.719,arm,feedback,夹爪闭合,0
+22:22:12.720,arm,feedback,规划中: 夹爪闭合,0
+22:22:12.874,arm,feedback,执行完成: 夹爪闭合,0
+22:22:12.874,arm,feedback,规划中: 提起工件,0
+22:22:14.052,arm,feedback,执行完成: 提起工件,0
+22:22:14.250,task,PLACE,取料完成，准备上料,0
+22:22:14.355,arm,feedback,规划中: 上料预放置点,0
+22:22:18.784,arm,feedback,执行完成: 上料预放置点,0
+22:22:18.784,arm,feedback,规划中: 放置点,0
+22:22:26.583,arm,feedback,执行完成: 放置点,0
+22:22:26.584,arm,feedback,夹爪张开,0
+22:22:26.585,arm,feedback,规划中: 夹爪张开,0
+22:22:26.740,arm,feedback,执行完成: 夹爪张开,0
+22:22:26.764,arm,feedback,工件已放入加工台，开始等待加工,0
+22:22:26.765,arm,feedback,规划中: 退出加工台,0
+22:22:27.049,task,ABORTED,place失败: 动作执行失败,0

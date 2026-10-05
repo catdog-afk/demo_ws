@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: place失败: 动作执行失败
+本轮任务时长: 28.3 秒
+任务经过的状态: WAIT_STATION -> PICK -> PLACE -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 28
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261006_003205_577085_15bae7b065a1405b8a3cd6265393a929.csv
