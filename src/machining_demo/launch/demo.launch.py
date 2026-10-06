@@ -18,6 +18,7 @@
     machining_sec:=5.0       加工时长
     machining_timeout:=8.0   加工超时阈值（演示"超时提示"拓展）
     use_rviz:=true           是否启动 RViz
+    scene_update_hz:=30.0    规划场景发布频率，影响场景机器人显示流畅度
     results_dir:=...         运行记录输出目录（默认 ~/demo_ws/results）
 """
 import os
@@ -57,7 +58,10 @@ def generate_launch_description():
         package='moveit_ros_move_group',
         executable='move_group',
         output='screen',
-        parameters=[moveit_config.to_dict()],
+        parameters=[moveit_config.to_dict(), {
+            # PlanningScene 显示依赖场景状态消息；默认 4Hz 会产生跳帧。
+            'publish_planning_scene_hz': parameter('scene_update_hz', float),
+        }],
     )
 
     # ---- ros2_control（mock_components 硬件模拟）----
@@ -112,7 +116,16 @@ def generate_launch_description():
         arguments=['-d', os.path.join(
             get_package_share_directory('machining_demo'),
             'rviz', 'machining_demo.rviz')],
-        parameters=[moveit_config.to_dict()],
+        # RViz 只加载模型和规划显示参数，不复用 move_group 的场景发布设置。
+        # 否则 RViz 的私有场景监视器也可能向 monitored_planning_scene 发布，
+        # 同一话题出现多个状态来源，甚至收到自己的场景更新。
+        parameters=[
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            moveit_config.planning_pipelines,
+            moveit_config.joint_limits,
+        ],
         output='screen',
     )
 
@@ -171,6 +184,8 @@ def generate_launch_description():
                               description='加工超时后允许延长一次等待窗口'),
         DeclareLaunchArgument('use_rviz', default_value='true',
                               description='是否启动 RViz'),
+        DeclareLaunchArgument('scene_update_hz', default_value='30.0',
+                              description='规划场景状态发布频率（Hz，必须大于 0）'),
         DeclareLaunchArgument('results_dir',
                               default_value=os.path.expanduser(
                                   '~/demo_ws/results'),

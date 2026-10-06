@@ -25,7 +25,9 @@ TABLE = {'name': 'table', 'size': (1.2, 1.2, 0.10), 'pos': (0.25, 0.0, -0.05)}
 # 料盘：顶面高度 z=0.04
 TRAY = {'name': 'tray', 'size': (0.32, 0.32, 0.04), 'pos': (0.45, 0.25, 0.02)}
 # 加工台（模拟机床）：顶面高度 z=0.10
-MACHINE = {'name': 'machine', 'size': (0.34, 0.30, 0.10), 'pos': (0.10, -0.25, 0.05)}
+# 原 x=0.10 的点位过于靠近基座，一些朝下的 IK 解令关节4逼近 -3.0718。
+# 向桌面前方移动 0.30m，为放置/取回的直线下降留出关节余量。
+MACHINE = {'name': 'machine', 'size': (0.34, 0.30, 0.10), 'pos': (0.40, -0.25, 0.05)}
 
 # RGBA 颜色与碰撞对象 ID 对应；取料、附着和放回时保持一致。
 OBJECT_COLORS = {
@@ -49,7 +51,8 @@ def slot_xyz(slot):
 
 def machine_xyz():
     """加工台上工件放置位置（世界坐标）。"""
-    return (0.10, -0.25, 0.122)
+    x, y, z = MACHINE['pos']
+    return (x, y, z + MACHINE['size'][2] / 2 + WORKPIECE_SIZE / 2 + 0.002)
 
 
 def workpiece_name(slot):

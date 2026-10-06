@@ -7,7 +7,8 @@ from unittest.mock import Mock, patch
 
 from ros_doubles import Node, Future, Data, ns, install
 install()
-from machining_demo.arm_controller import ArmController, ARM_JOINTS, FINGER_JOINTS, make_pose
+from machining_demo.arm_controller import (ArmController, ARM_JOINTS, FINGER_JOINTS,
+                                           HOME_JOINTS, make_pose)
 from machining_demo import layout
 
 
@@ -23,9 +24,10 @@ class LinearMotionTests(unittest.TestCase):
         self.node = ArmController()
         self.node._execute_client = Mock()
         self.node._validity_client.ready = False
-        self.start = ns(is_diff=True)
+        self.start = ns(is_diff=True, joint_state=ns(name=ARM_JOINTS, position=HOME_JOINTS))
         self.node._motion_start_state = Mock(return_value=self.start)
-        self.trajectory = ns(joint_trajectory=ns(points=[ns()]))
+        self.trajectory = ns(joint_trajectory=ns(joint_names=ARM_JOINTS,
+                                                points=[ns(positions=HOME_JOINTS[:])]))
         self.node._cartesian_client.call_async = Mock(return_value=completed(
             ns(error_code=ns(val=1), fraction=1.0, solution=self.trajectory)))
         self.goal_handle = ns(accepted=True, get_result_async=lambda: completed(
@@ -43,7 +45,7 @@ class LinearMotionTests(unittest.TestCase):
         self.assertEqual(request.group_name, 'panda_arm')
         self.assertEqual(request.waypoints, [pose])
         self.assertEqual(request.max_step, 0.002)
-        self.assertGreater(request.jump_threshold, 0.0)
+        self.assertEqual(request.jump_threshold, 0.0)
         self.assertEqual(request.max_velocity_scaling_factor, 0.5)
         goal = self.node._execute_client.send_goal_async.call_args.args[0]
         self.assertIs(goal.trajectory, self.trajectory)
@@ -71,6 +73,37 @@ class LinearMotionTests(unittest.TestCase):
         self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '放置点'))
         self.assertIn('放置点', self.node._last_error)
         self.assertIn('CONTROL_FAILED (-4)', self.node._last_error)
+
+    def test_ik_branch_jump_in_full_path_is_never_executed(self):
+        jumped = HOME_JOINTS[:]
+        jumped[3] += 0.3
+        self.trajectory.joint_trajectory.points.append(ns(positions=jumped))
+        self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '放置点'))
+        self.assertIn('panda_joint4', self.node._last_error)
+        self.assertIn('跳变', self.node._last_error)
+        self.node._execute_client.send_goal_async.assert_not_called()
+
+    def test_jump_between_current_state_and_first_point_is_rejected(self):
+        self.trajectory.joint_trajectory.points[0].positions[0] += 0.5
+        self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '取回抓取点'))
+        self.node._execute_client.send_goal_async.assert_not_called()
+
+    def test_incomplete_or_invalid_trajectory_values_are_rejected(self):
+        for values in ([0.0] * 6, [float('nan')] * 7):
+            self.trajectory.joint_trajectory.points[0].positions = values
+            self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '放置点'))
+        self.trajectory.joint_trajectory.joint_names = ARM_JOINTS[:-1]
+        self.trajectory.joint_trajectory.points[0].positions = [0.0] * 6
+        self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '放置点'))
+        self.node._execute_client.send_goal_async.assert_not_called()
+
+    def test_partial_path_endpoint_is_recorded_but_not_executed(self):
+        self.node._cartesian_client.call_async.return_value = completed(
+            ns(error_code=ns(val=1), fraction=0.5833, solution=self.trajectory))
+        self.assertFalse(self.node._goto_linear(make_pose(0, 0, 0), '取回抓取点'))
+        messages = [msg.data for msg in self.node.pub_status.messages]
+        self.assertTrue(any('未执行' in text and 'panda_joint4' in text for text in messages))
+        self.node._execute_client.send_goal_async.assert_not_called()
 
     def test_rejected_execution_goal_is_not_success(self):
         self.goal_handle.accepted = False

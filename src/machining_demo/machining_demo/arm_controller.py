@@ -59,6 +59,10 @@ HOME_JOINTS = [0.0, -0.785, 0.0, -2.356, 0.0, 1.571, 0.785]
 HAND_OPEN = [0.035, 0.035]
 HAND_CLOSE = [0.0, 0.0]
 
+# 仅用于抓取附近的短直线段：拒绝任何一步超过约 11.5 度的关节变化。
+# 在服务返回的时间参数化轨迹上检查，也包含当前状态到轨迹首点。
+MAX_LINEAR_JOINT_STEP = 0.20
+
 # MoveGroup 动作返回码
 MOVEIT_ERROR_SUCCESS = 1
 
@@ -380,7 +384,9 @@ class ArmController(Node):
         request.link_name = layout.EE_LINK
         request.waypoints = [pose]
         request.max_step = 0.002
-        request.jump_threshold = 2.0
+        # 约 2cm 的短路径不采用相对平均步长阈值；首次纠正姿态等正常变化
+        # 也可能被相对阈值截断。完整路径另用绝对关节变化上限检查。
+        request.jump_threshold = 0.0
         request.avoid_collisions = True
         request.max_velocity_scaling_factor = self.get_parameter('velocity_scale').value
         request.max_acceleration_scaling_factor = 0.3
@@ -396,6 +402,11 @@ class ArmController(Node):
         fraction = result.fraction
         if (result.error_code.val != MOVEIT_ERROR_SUCCESS or
                 not math.isfinite(fraction) or abs(fraction - 1.0) > 1e-6):
+            partial = result.solution.joint_trajectory
+            if partial.points:
+                joints = ', '.join('%s=%.5f' % (j, value) for j, value in
+                                   zip(partial.joint_names, partial.points[-1].positions))
+                self._status('直线路径末端（未执行）：%s' % joints)
             self._diagnose_state()
             self._failure('%s：直线路径不完整 (%.2f%%)，%s，不执行部分轨迹' %
                           (name, fraction * 100.0, self._error_code(result.error_code.val)))
@@ -404,9 +415,39 @@ class ArmController(Node):
         if not trajectory.joint_trajectory.points:
             self._failure('%s：直线规划返回空轨迹' % name)
             return False
+        if not self._check_linear_jumps(start_state, trajectory, name):
+            return False
         goal = ExecuteTrajectory.Goal()
         goal.trajectory = trajectory
         return self._execute_action(self._execute_client, goal, name)
+
+    def _check_linear_jumps(self, start_state, trajectory, name):
+        """绝对步长检查：不允许靠切换 IK 分支完成短直线运动。"""
+        jt = trajectory.joint_trajectory
+        names = list(jt.joint_names)
+        start = dict(zip(start_state.joint_state.name, start_state.joint_state.position))
+        if (len(names) != len(ARM_JOINTS) or set(names) != set(ARM_JOINTS) or
+                any(j not in start for j in names)):
+            self._failure('%s：直线轨迹关节不完整，不执行' % name)
+            return False
+        previous = [start[j] for j in names]
+        if not all(math.isfinite(value) for value in previous):
+            self._failure('%s：起始关节反馈包含无效数值，不执行' % name)
+            return False
+        for index, point in enumerate(jt.points):
+            values = list(point.positions)
+            if len(values) != len(names) or not all(math.isfinite(value) for value in values):
+                self._failure('%s：直线轨迹第 %d 点包含无效关节值，不执行' % (name, index))
+                return False
+            jumps = [abs(value - old) for value, old in zip(values, previous)]
+            largest = max(jumps)
+            if largest > MAX_LINEAR_JOINT_STEP:
+                joint = names[jumps.index(largest)]
+                self._failure('%s：直线轨迹 %s 跳变 %.4f rad，超过 %.2f rad，不执行' %
+                              (name, joint, largest, MAX_LINEAR_JOINT_STEP))
+                return False
+            previous = values
+        return True
 
     # ---------- 场景更新（工件附着/分离） ----------
     def _apply_scene(self, scene):

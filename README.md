@@ -50,10 +50,18 @@ ros2 launch machining_demo demo.launch.py repeat_cycle:=false
 桌面为深灰色、料盘为蓝色、加工台为浅灰色。槽位 0/1/2 的工件分别为橙色、黄色、紫色，
 取料、夹爪附着、上料和放回后保持颜色一致。RViz 默认视角调整为较近的俯视，便于观察工件。
 
-默认关闭 `Trajectory` 规划轨迹预览，避免半透明预览机器人与实际运动叠加造成残影。
-需要查看规划结果时可在 RViz 左侧重新勾选 `Trajectory`；其播放速度设为 `1x`，
-但预览动画仍独立于实际控制器执行。如果关闭后仍有双影，可再取消勾选 `RobotModel`，
-保留 `PlanningScene` 显示机器人及附着工件；单凭画面残影不能证明有残留仿真进程。
+默认由 `PlanningScene` 显示机器人及附着工件，关闭重复的 `RobotModel` 和 `Trajectory` 预览，
+避免多个模型不同步造成双影。场景状态发布频率设为 30Hz，RViz 的 `Scene Display Time`
+设为 0.02 秒；显示帧率仍为 30。实际流畅度还受机器图形性能和消息更新频率影响。
+RViz 只接收场景，不加载 move_group 的场景发布参数，避免重复发布或场景反馈循环。
+需要查看规划结果时可重新勾选 `Trajectory`，其播放速度为 `1x`，预览动画独立于实际执行。
+单凭画面残影不能证明有残留仿真进程。
+
+旧版本可先在 RViz 中把 `PlanningScene → Scene Geometry → Scene Display Time` 从 `0.2` 改为
+`0.02`；如果消息源仍只有几 Hz，这一步无法单独消除跳帧，需要更新并重新启动 launch。
+复测时可以在另一个已加载 ROS 环境的终端运行 `ros2 topic hz /monitored_planning_scene`，
+在机械臂运动期间观察实际消息频率，并用 `ros2 topic info /monitored_planning_scene --verbose`
+确认发布者归属（本演示应由 move_group 的场景监视器发布，而不是 RViz）。
 
 > ⚠️ **一次只能运行一个演示实例**。重复启动会导致控制器重复加载、
 > `/move_action` 动作名冲突，机械臂报"取料失败"。
@@ -92,6 +100,7 @@ ps -eo pid,ppid,stat,args | grep -E '[m]achining_demo|[m]ove_group|[r]os2_contro
 | `station_timeout` | 30.0 | 等待场景、服务、工位 READY 的超时阈值 |
 | `arm_call_timeout` | 660.0 | 整个取放动作服务的超时阈值，包含多段规划与执行 |
 | `use_rviz` | true | 是否启动 RViz |
+| `scene_update_hz` | 30.0 | 场景状态发布频率（Hz，必须大于 0）；性能较弱时可尝试 15.0 |
 | `results_dir` | ~/demo_ws/results | 运行记录输出目录 |
 
 演示"加工超时警告"（条件变化场景）：
@@ -167,6 +176,13 @@ GitHub Actions 自动执行离线回归测试，ROS/MoveIt 集成验收需在 Ub
 完整路径才允许执行；路径不完整时直接中止，不执行部分路径。长距离转移仍使用 OMPL。
 每段运动前等待新的完整关节反馈，失败时 CSV 和摘要保留动作名称、返回码或直线路径完成比例，
 CSV 还记录当时关节位置和可查询到的碰撞对象。
+
+10 月 6 日的新日志中，一组任务连续完成了 17 轮，但其他运行仍出现加工台附近的部分直线路径。
+三次失败现场的关节4接近软限位 -3.0718 rad。加工台现沿 x 轴从 0.10m 移至 0.40m，
+放置点和取回点直接从加工台几何位置计算；离线运动学样本显示新点位有更大的关节余量，
+实际碰撞与 IK 仍以 MoveIt 仿真为准。
+短直线轨迹改用绝对关节变化检查：当前状态到轨迹首点及相邻点均不得跳变超过 0.20 rad。
+碰撞检查、完整路径要求保留，部分路径末端的关节值也会写入日志，便于区分 IK/限位和接触问题。
 
 复测前在原终端按 Ctrl+C，等待退出完成，再更新代码、编译。建议保存完整终端输出：
 

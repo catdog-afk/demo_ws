@@ -364,6 +364,25 @@ class MachineTests(unittest.TestCase):
 
 
 class GeometryTests(unittest.TestCase):
+    def test_machine_target_tracks_the_machine_geometry(self):
+        x, y, z = layout.machine_xyz()
+        self.assertEqual((x, y), layout.MACHINE['pos'][:2])
+        surface = layout.MACHINE['pos'][2] + layout.MACHINE['size'][2] / 2
+        self.assertAlmostEqual(z - layout.WORKPIECE_SIZE / 2 - surface, 0.002)
+        self.assertGreater((x*x + y*y) ** 0.5, 0.4)
+
+    def test_moved_machine_stays_on_table_and_clear_of_tray(self):
+        for axis in (0, 1):
+            table_min = layout.TABLE['pos'][axis] - layout.TABLE['size'][axis] / 2
+            table_max = layout.TABLE['pos'][axis] + layout.TABLE['size'][axis] / 2
+            machine_min = layout.MACHINE['pos'][axis] - layout.MACHINE['size'][axis] / 2
+            machine_max = layout.MACHINE['pos'][axis] + layout.MACHINE['size'][axis] / 2
+            self.assertGreaterEqual(machine_min, table_min)
+            self.assertLessEqual(machine_max, table_max)
+        machine_back = layout.MACHINE['pos'][1] + layout.MACHINE['size'][1] / 2
+        tray_front = layout.TRAY['pos'][1] - layout.TRAY['size'][1] / 2
+        self.assertLess(machine_back, tray_front)
+
     def test_scene_box_has_one_world_transform(self):
         node = SceneManager.__new__(SceneManager)
         obj = node._box('box', (0.04,) * 3, (0.45, 0.17, 0.062))
