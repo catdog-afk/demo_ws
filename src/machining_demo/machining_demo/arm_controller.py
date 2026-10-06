@@ -2,6 +2,8 @@
 
 通过 move_group 的标准 ROS 接口实现运动控制（不使用 moveit_commander）：
     - /move_action 动作（MoveGroup action）：运动规划 + 轨迹执行
+    - /compute_cartesian_path + /execute_trajectory：抓取附近的直线进退
+    - /check_state_validity：失败后的当前状态碰撞诊断
     - /apply_planning_scene 服务：场景更新（工件附着 / 分离）
     - /joint_states 话题：获取当前关节状态作为规划起点
 
@@ -23,6 +25,7 @@
 """
 import time
 import threading
+import math
 
 import rclpy
 from rclpy.node import Node
@@ -38,9 +41,9 @@ from moveit_msgs.msg import (MotionPlanRequest, PlanningOptions, Constraints,
                              PositionConstraint, OrientationConstraint,
                              JointConstraint, BoundingVolume, RobotState,
                              PlanningScene, AttachedCollisionObject,
-                             CollisionObject)
-from moveit_msgs.action import MoveGroup
-from moveit_msgs.srv import ApplyPlanningScene
+                             CollisionObject, MoveItErrorCodes)
+from moveit_msgs.action import MoveGroup, ExecuteTrajectory
+from moveit_msgs.srv import ApplyPlanningScene, GetCartesianPath, GetStateValidity
 
 from demo_interfaces.srv import ArmCommand
 
@@ -84,6 +87,15 @@ class ArmController(Node):
         self._action_client = ActionClient(
             self, MoveGroup, '/move_action',
             callback_group=self._clients_group)
+        self._execute_client = ActionClient(
+            self, ExecuteTrajectory, '/execute_trajectory',
+            callback_group=self._clients_group)
+        self._cartesian_client = self.create_client(
+            GetCartesianPath, '/compute_cartesian_path',
+            callback_group=self._clients_group)
+        self._validity_client = self.create_client(
+            GetStateValidity, '/check_state_validity',
+            callback_group=self._clients_group)
         self._scene_client = self.create_client(
             ApplyPlanningScene, '/apply_planning_scene',
             callback_group=self._clients_group)
@@ -95,6 +107,7 @@ class ArmController(Node):
         # 最新关节状态（/joint_states 订阅，多线程保护）
         # 同样使用独立回调组：服务回调阻塞期间仍需持续更新关节状态
         self._joint_positions = {}
+        self._joint_received = {}
         self._joint_lock = threading.Lock()
         self._joint_group = MutuallyExclusiveCallbackGroup()
         self.create_subscription(JointState, '/joint_states', self._js_cb, 10,
@@ -103,14 +116,17 @@ class ArmController(Node):
         # 当前附着工件 / 加工台上的工件（用于 place/retrieve 跟踪）
         self._attached_name = None
         self._machine_workpiece = None
+        self._last_error = ''
 
         self.get_logger().info('机械臂控制节点就绪，服务 /arm/command 已创建')
 
     # ---------- 关节状态 ----------
     def _js_cb(self, msg):
+        received = time.monotonic()
         with self._joint_lock:
             for name, pos in zip(msg.name, msg.position):
                 self._joint_positions[name] = pos
+                self._joint_received[name] = received
 
     def _wait_ready(self):
         """等待 move_group 动作服务与关节状态就绪。"""
@@ -120,6 +136,8 @@ class ArmController(Node):
                 arm_ready = all(j in self._joint_positions
                                 for j in ARM_JOINTS + FINGER_JOINTS)
             if (self._action_client.server_is_ready() and
+                    self._execute_client.server_is_ready() and
+                    self._cartesian_client.service_is_ready() and
                     self._scene_client.service_is_ready() and arm_ready):
                 return True
             time.sleep(0.2)
@@ -138,10 +156,25 @@ class ArmController(Node):
         rs.joint_state = js
         return rs
 
+    def _motion_start_state(self, name):
+        """等待本次请求之后的完整反馈，避免沿用上一段运动结束前的状态。"""
+        since = time.monotonic()
+        deadline = since + 2.0
+        while rclpy.ok() and time.monotonic() < deadline:
+            with self._joint_lock:
+                fresh = all(self._joint_received.get(j, 0.0) >= since
+                            for j in ARM_JOINTS + FINGER_JOINTS)
+            if fresh:
+                return self._current_state()
+            time.sleep(0.02)
+        self._failure('%s：未收到新的完整关节反馈，不发送运动目标' % name)
+        return None
+
     # ---------- 服务回调 ----------
     def _cmd_cb(self, request, response):
         command = request.command
         slot = request.slot
+        self._last_error = ''
         self.get_logger().info('收到动作指令: %s (slot=%d)' % (command, slot))
         if not self._wait_ready():
             response.success = False
@@ -167,9 +200,9 @@ class ArmController(Node):
                 response.message = '未知指令: ' + command
                 return response
             response.success = ok
-            response.message = 'ok' if ok else '动作执行失败'
+            response.message = 'ok' if ok else (self._last_error or '动作执行失败')
         except Exception as e:  # 规划失败等异常统一处理
-            self.get_logger().error('指令 %s 执行异常: %s' % (command, e))
+            self._failure('指令 %s 执行异常: %s' % (command, e))
             response.success = False
             response.message = '异常: %s' % e
         return response
@@ -222,14 +255,23 @@ class ArmController(Node):
             jc = JointConstraint()
             jc.joint_name = name
             jc.position = float(val)
-            jc.tolerance_above = 0.01
-            jc.tolerance_below = 0.01
+            # 手指为直线关节，单位是米；旧值 0.01 允许少张开 10mm。
+            # 料宽仅 40mm，必须保证实际张开程度，降低抓取/分离时接触风险。
+            tolerance = 0.0005 if name in FINGER_JOINTS else 0.01
+            jc.tolerance_above = tolerance
+            jc.tolerance_below = tolerance
             jc.weight = 1.0
             c.joint_constraints.append(jc)
         return c
 
     def _plan_execute(self, group, goal_constraints, name):
         """向 move_group 发送规划+执行请求（阻塞至完成）。"""
+        if not rclpy.ok():
+            self._failure('%s：节点正在退出，不再发送运动目标' % name)
+            return False
+        start_state = self._motion_start_state(name)
+        if start_state is None:
+            return False
         self._status('规划中: %s' % name)
         req = MotionPlanRequest()
         req.workspace_parameters.header.frame_id = 'panda_link0'
@@ -239,7 +281,7 @@ class ArmController(Node):
         req.workspace_parameters.max_corner.x = 1.0
         req.workspace_parameters.max_corner.y = 0.8
         req.workspace_parameters.max_corner.z = 1.2
-        req.start_state = self._current_state()
+        req.start_state = start_state
         req.goal_constraints = [goal_constraints]
         req.group_name = group
         req.num_planning_attempts = 3
@@ -253,12 +295,19 @@ class ArmController(Node):
         goal.request = req
         goal.planning_options = PlanningOptions(replan=True)
 
-        future = self._action_client.send_goal_async(goal)
+        return self._execute_action(self._action_client, goal, name)
+
+    def _execute_action(self, client, goal, name):
+        """统一检查 MoveGroup / ExecuteTrajectory 的接受、超时和执行结果。"""
+        if not rclpy.ok():
+            self._failure('%s：节点正在退出，不再发送运动目标' % name)
+            return False
+        future = client.send_goal_async(goal)
         deadline = time.monotonic() + 10.0
         while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.05)
         if not future.done() or not future.result().accepted:
-            self.get_logger().error('move_group 未接受目标: %s' % name)
+            self._failure('%s：运动目标未接受或响应超时' % name)
             return False
         goal_handle = future.result()
 
@@ -267,19 +316,97 @@ class ArmController(Node):
         while rclpy.ok() and not result_future.done() and time.monotonic() < deadline:
             time.sleep(0.05)
         if not result_future.done():
-            self.get_logger().error('动作超时: %s' % name)
-            goal_handle.cancel_goal_async()
+            self._failure('%s：动作超时或节点正在退出' % name)
+            if rclpy.ok():
+                goal_handle.cancel_goal_async()
             return False
         result = result_future.result().result
         if result.error_code.val == MOVEIT_ERROR_SUCCESS:
             self._status('执行完成: %s' % name)
             return True
-        self.get_logger().error('规划/执行失败(%s): %s'
-                                % (name, result.error_code.val))
+        code = result.error_code.val
+        self._diagnose_state()
+        self._failure('%s：规划/执行失败 %s' % (name, self._error_code(code)))
         return False
+
+    @staticmethod
+    def _error_code(code):
+        code_name = next((key for key in dir(MoveItErrorCodes)
+                          if key.isupper() and getattr(MoveItErrorCodes, key) == code), 'UNKNOWN')
+        return '%s (%d)' % (code_name, code)
+
+    def _diagnose_state(self):
+        """失败时记录实际关节和当前碰撞对；诊断服务不可用不影响原失败原因。"""
+        with self._joint_lock:
+            joints = ', '.join('%s=%.5f' % (j, self._joint_positions[j])
+                               for j in ARM_JOINTS + FINGER_JOINTS
+                               if j in self._joint_positions)
+        self._status('失败现场：%s；附着=%s；加工台工件=%s' %
+                     (joints, self._attached_name, self._machine_workpiece))
+        if not rclpy.ok() or not self._validity_client.service_is_ready():
+            return
+        try:
+            request = GetStateValidity.Request()
+            request.robot_state = self._current_state()
+            request.group_name = layout.ARM_GROUP
+            future = self._validity_client.call_async(request)
+            deadline = time.monotonic() + 1.0
+            while rclpy.ok() and not future.done() and time.monotonic() < deadline:
+                time.sleep(0.02)
+            if not future.done():
+                future.cancel()
+                self._status('失败现场：状态碰撞查询超时')
+                return
+            result = future.result()
+            contacts = ', '.join('%s/%s' % (c.contact_body_1, c.contact_body_2)
+                                 for c in result.contacts[:10]) or '无'
+            self._status('失败现场：当前状态有效=%s；碰撞对=%s' % (result.valid, contacts))
+        except Exception as exc:
+            self._status('失败现场：状态碰撞查询异常 %s' % exc)
 
     def _goto_pose(self, pose, name):
         return self._plan_execute(layout.ARM_GROUP, self._pose_goal(pose), name)
+
+    def _goto_linear(self, pose, name):
+        """抓取附近沿直线进退，保留当前 IK 分支；完整且避碰的轨迹才执行。"""
+        start_state = self._motion_start_state(name)
+        if start_state is None:
+            return False
+        self._status('直线规划中: %s' % name)
+        request = GetCartesianPath.Request()
+        request.header.frame_id = 'panda_link0'
+        request.start_state = start_state
+        request.group_name = layout.ARM_GROUP
+        request.link_name = layout.EE_LINK
+        request.waypoints = [pose]
+        request.max_step = 0.002
+        request.jump_threshold = 2.0
+        request.avoid_collisions = True
+        request.max_velocity_scaling_factor = self.get_parameter('velocity_scale').value
+        request.max_acceleration_scaling_factor = 0.3
+        future = self._cartesian_client.call_async(request)
+        deadline = time.monotonic() + 10.0
+        while rclpy.ok() and not future.done() and time.monotonic() < deadline:
+            time.sleep(0.02)
+        if not future.done():
+            future.cancel()
+            self._failure('%s：直线路径查询超时或节点正在退出' % name)
+            return False
+        result = future.result()
+        fraction = result.fraction
+        if (result.error_code.val != MOVEIT_ERROR_SUCCESS or
+                not math.isfinite(fraction) or abs(fraction - 1.0) > 1e-6):
+            self._diagnose_state()
+            self._failure('%s：直线路径不完整 (%.2f%%)，%s，不执行部分轨迹' %
+                          (name, fraction * 100.0, self._error_code(result.error_code.val)))
+            return False
+        trajectory = result.solution
+        if not trajectory.joint_trajectory.points:
+            self._failure('%s：直线规划返回空轨迹' % name)
+            return False
+        goal = ExecuteTrajectory.Goal()
+        goal.trajectory = trajectory
+        return self._execute_action(self._execute_client, goal, name)
 
     # ---------- 场景更新（工件附着/分离） ----------
     def _apply_scene(self, scene):
@@ -290,7 +417,7 @@ class ArmController(Node):
         while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.02)
         if not future.done() or not future.result().success:
-            self.get_logger().error('场景更新失败')
+            self._failure('工件附着/分离：场景更新失败或响应超时')
             return False
         return True
 
@@ -358,7 +485,15 @@ class ArmController(Node):
     # ---------- 基础动作 ----------
     def _status(self, text):
         self.get_logger().info(text)
-        self.pub_status.publish(String(data=text))
+        if rclpy.ok():
+            self.pub_status.publish(String(data=text))
+
+    def _failure(self, text):
+        """同时保存服务响应与 CSV 反馈，避免丢失失败动作和 MoveIt 返回码。"""
+        self._last_error = text
+        self.get_logger().error(text)
+        if rclpy.ok():
+            self.pub_status.publish(String(data=text))
 
     def _home(self):
         return self._plan_execute(layout.ARM_GROUP,
@@ -379,7 +514,7 @@ class ArmController(Node):
             self.get_logger().error('槽位 %d 超出范围' % slot)
             return False
         if self._attached_name is not None or self._machine_workpiece is not None:
-            self.get_logger().error('已有工件在夹爪或加工台，不能重复取料')
+            self._failure('已有工件在夹爪或加工台，不能重复取料')
             return False
         x, y, z = layout.slot_xyz(slot)
         name = layout.workpiece_name(slot)
@@ -392,7 +527,7 @@ class ArmController(Node):
             return False
         if not self._goto_pose(approach, '预抓取点(槽位%d)' % slot):
             return False
-        if not self._goto_pose(grasp, '抓取点(槽位%d)' % slot):
+        if not self._goto_linear(grasp, '抓取点(槽位%d)' % slot):
             return False
         # 先附着再闭合：附着后 touch_links 自动允许手指与工件接触，
         # 闭合时手指扫过工件才不会被碰撞检测拒绝
@@ -402,7 +537,7 @@ class ArmController(Node):
         self._status('工件 %s 已附着到末端' % name)
         if not self._gripper(open_=False):
             return False
-        if not self._goto_pose(approach, '提起工件'):
+        if not self._goto_linear(approach, '提起工件'):
             return False
         self.pub_workpiece.publish(Bool(data=False))
         return True
@@ -418,7 +553,7 @@ class ArmController(Node):
 
         if not self._goto_pose(approach, '上料预放置点'):
             return False
-        if not self._goto_pose(place, '放置点'):
+        if not self._goto_linear(place, '放置点'):
             return False
         if not self._gripper(open_=True):
             return False
@@ -428,7 +563,7 @@ class ArmController(Node):
         self._attached_name = None
         self._machine_workpiece = name
         self._status('工件已放入加工台，开始等待加工')
-        if not self._goto_pose(approach, '退出加工台'):
+        if not self._goto_linear(approach, '退出加工台'):
             return False
         self.pub_workpiece.publish(Bool(data=True))
         return True
@@ -444,7 +579,7 @@ class ArmController(Node):
 
         if not self._goto_pose(approach, '取回预抓取点'):
             return False
-        if not self._goto_pose(grasp, '取回抓取点'):
+        if not self._goto_linear(grasp, '取回抓取点'):
             return False
         # MoveIt 附着操作同时移除世界物体，避免两次更新之间丢失工件。
         if not self._attach_workpiece(name):
@@ -454,7 +589,7 @@ class ArmController(Node):
         self._status('工件已从加工台取回并附着')
         if not self._gripper(open_=False):
             return False
-        if not self._goto_pose(approach, '取回提起'):
+        if not self._goto_linear(approach, '取回提起'):
             return False
         self.pub_workpiece.publish(Bool(data=False))
         return True
@@ -473,7 +608,7 @@ class ArmController(Node):
 
         if not self._goto_pose(approach, '放回预放置点(槽位%d)' % slot):
             return False
-        if not self._goto_pose(grasp, '放回点(槽位%d)' % slot):
+        if not self._goto_linear(grasp, '放回点(槽位%d)' % slot):
             return False
         if not self._gripper(open_=True):
             return False
@@ -481,7 +616,7 @@ class ArmController(Node):
             return False
         self._attached_name = None
         self._status('工件已放回料盘槽位 %d' % slot)
-        if not self._goto_pose(approach, '退出料盘'):
+        if not self._goto_linear(approach, '退出料盘'):
             return False
         return True
 

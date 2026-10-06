@@ -19,13 +19,15 @@ if [[ -f "$pid_file" ]]; then
             exit 1
         fi
         echo '>> 结束此前由本脚本启动的 A2 演示...'
-        kill -TERM -- "-$old_pid" 2>/dev/null || true
-        for attempt in {1..30}; do
-            kill -0 -- "-$old_pid" 2>/dev/null || break
+        # SIGINT 触发 ROS launch 对所有子节点的完整退出流程。
+        kill -INT "$old_pid" 2>/dev/null || true
+        for attempt in {1..100}; do
+            kill -0 "$old_pid" 2>/dev/null || break
             sleep 0.2
         done
-        if kill -0 -- "-$old_pid" 2>/dev/null; then
-            kill -KILL -- "-$old_pid" 2>/dev/null || true
+        if kill -0 "$old_pid" 2>/dev/null; then
+            echo '旧演示仍未退出，保留进程标识并停止启动新实例。' >&2
+            exit 1
         fi
     fi
     rm -f -- "$pid_file"
@@ -42,7 +44,15 @@ demo_pid=$!
 printf '%s\n' "$demo_pid" > "$pid_file"
 
 cleanup() {
-    kill -TERM -- "-$demo_pid" 2>/dev/null || true
+    kill -INT "$demo_pid" 2>/dev/null || true
+    for attempt in {1..100}; do
+        kill -0 "$demo_pid" 2>/dev/null || break
+        sleep 0.2
+    done
+    if kill -0 "$demo_pid" 2>/dev/null; then
+        echo '演示仍在退出，保留进程标识；等待退出日志结束后再启动。' >&2
+        return
+    fi
     if [[ -f "$pid_file" && "$(cat -- "$pid_file")" == "$demo_pid" ]]; then
         rm -f -- "$pid_file"
     fi

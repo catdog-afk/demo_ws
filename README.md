@@ -138,6 +138,29 @@ ros2 run machining_demo demo_test --ros-args -p slot:=1
 连续运行方式使用默认启动命令；集成验收使用单轮模式，便于核对本次任务的结束状态和日志。
 GitHub Actions 自动执行离线回归测试，ROS/MoveIt 集成验收需在 Ubuntu 22.04 + ROS2 Humble 上另行执行。
 
+### 连续循环失败的排查与复测
+
+`debug-pr2-fix` 中上传的 10 月 5 日 23 点之后记录显示：两轮在预抓取成功后的下降阶段中止，
+另一次在放下工件后的退出加工台阶段中止。旧 CSV 只记录了“动作执行失败”，没有 MoveIt 返回码，
+因此这些记录能定位失败阶段，不能确认唯一根因。
+
+控制代码现将夹爪直线关节的目标容差从 10mm 改为 0.5mm；靠近工件的下降和退出改为
+`/compute_cartesian_path` 直线规划，再通过 `/execute_trajectory` 执行。直线路径保持碰撞检查，
+完整路径才允许执行；路径不完整时直接中止，不执行部分路径。长距离转移仍使用 OMPL。
+每段运动前等待新的完整关节反馈，失败时 CSV 和摘要保留动作名称、返回码或直线路径完成比例，
+CSV 还记录当时关节位置和可查询到的碰撞对象。
+
+复测前在原终端按 Ctrl+C，等待退出完成，再更新代码、编译。建议保存完整终端输出：
+
+```bash
+ros2 launch machining_demo demo.launch.py 2>&1 | tee ~/pick_failure.log
+```
+
+连续观察至少 5 轮 `DONE`，再用 `slot:=1`、`slot:=2` 分别启动检查另外两个槽位。
+若仍出现 `ABORTED`，保留本次 `summary_*.txt`、`task_log_*.csv` 以及 `~/pick_failure.log`。
+这些修改通过离线控制逻辑测试，真实 IK、碰撞和连续运动效果仍需在 ROS2 仿真环境复测。
+重启脚本使用 SIGINT 请求 launch 退出，并等待旧实例结束；若未能退出则保留进程标识、拒绝启动新实例。
+
 ### 录制演示视频
 
 ```bash

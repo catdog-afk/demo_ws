@@ -177,6 +177,7 @@ class TrayOccupancy:
 
 class Request:
     def __init__(self):
+        self.header = ns(frame_id='')
         self.scene = None
         self.command = ''
         self.slot = 0
@@ -210,6 +211,14 @@ class ObjectColor:
         self.color = ns(r=0.0, g=0.0, b=0.0, a=0.0)
 
 
+class MoveItErrorCodes:
+    SUCCESS = 1
+    PLANNING_FAILED = -1
+    INVALID_MOTION_PLAN = -2
+    CONTROL_FAILED = -4
+    START_STATE_IN_COLLISION = -10
+
+
 class Primitive:
     BOX, SPHERE = 1, 2
 
@@ -218,6 +227,13 @@ class Data:
     def __init__(self, data=None, **kwargs):
         self.data = data
         self.__dict__.update(kwargs)
+
+
+class Constraints:
+    def __init__(self):
+        self.joint_constraints = []
+        self.position_constraints = []
+        self.orientation_constraints = []
 
 
 def install():
@@ -235,16 +251,18 @@ def install():
         'geometry_msgs.msg': dict(Pose=Pose, TransformStamped=Data),
         'shape_msgs.msg': dict(SolidPrimitive=Primitive),
         'moveit_msgs.msg': dict(PlanningScene=PlanningScene, CollisionObject=CollisionObject,
-                               AttachedCollisionObject=Data, ObjectColor=ObjectColor),
-        'moveit_msgs.action': dict(MoveGroup=Data),
-        'moveit_msgs.srv': dict(ApplyPlanningScene=Service),
+                               AttachedCollisionObject=Data, ObjectColor=ObjectColor,
+                               MoveItErrorCodes=MoveItErrorCodes, Constraints=Constraints),
+        'moveit_msgs.action': dict(MoveGroup=Data, ExecuteTrajectory=ns(Goal=Data)),
+        'moveit_msgs.srv': dict(ApplyPlanningScene=Service, GetCartesianPath=Service,
+                               GetStateValidity=Service),
         'demo_interfaces.msg': dict(TaskState=TaskState, MachineStatus=MachineStatus,
                                    TrayOccupancy=TrayOccupancy),
         'demo_interfaces.srv': dict(StartTask=Service, CancelTask=Service, ArmCommand=Service,
                                    SetOccupancy=Service, ResetMachine=Service),
         'tf2_ros': dict(StaticTransformBroadcaster=Mock),
     }
-    for name in ('MotionPlanRequest', 'PlanningOptions', 'Constraints', 'PositionConstraint',
+    for name in ('MotionPlanRequest', 'PlanningOptions', 'PositionConstraint',
                  'OrientationConstraint', 'JointConstraint', 'BoundingVolume', 'RobotState'):
         definitions['moveit_msgs.msg'][name] = Data
     for name, values in definitions.items():
