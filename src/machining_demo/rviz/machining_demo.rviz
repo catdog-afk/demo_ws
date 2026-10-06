@@ -213,7 +213,7 @@ Visualization Manager:
       Value: true
     - Class: moveit_rviz_plugin/Trajectory
       Color Enabled: false
-      Enabled: true
+      Enabled: false
       Interrupt Display: false
       Links:
         All Links Enabled: true
@@ -288,11 +288,11 @@ Visualization Manager:
       Show Robot Collision: false
       Show Robot Visual: true
       Show Trail: false
-      State Display Time: 3x
+      State Display Time: 1x
       Trail Step Size: 1
       Trajectory Topic: /display_planned_path
       Use Sim Time: false
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Marker
       Enabled: true
       Name: TaskStatus
