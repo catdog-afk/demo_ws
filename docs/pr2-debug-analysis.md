@@ -46,6 +46,9 @@
   诊断当前状态及碰撞对象；诊断失败不会覆盖原动作失败原因。
 - [ROS2 Humble LaunchService](https://github.com/ros2/launch/blob/humble/launch/launch/launch_service.py)：
   SIGINT 触发 launch 的关闭流程。
+- [ROS2 Humble ExecuteLocal](https://github.com/ros2/launch/blob/humble/launch/launch/actions/execute_local.py)：
+  SIGINT 关闭事件在非交互模式下主动向子节点传递信号。重启脚本在独立会话中运行 launch，
+  因此显式传入 `--noninteractive`，而不依赖子节点收到终端广播的 Ctrl+C。
 
 ## 验证边界
 

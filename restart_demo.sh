@@ -14,7 +14,9 @@ if [[ -f "$pid_file" ]]; then
     if [[ "$old_pid" =~ ^[0-9]+$ ]] && kill -0 "$old_pid" 2>/dev/null; then
         old_command="$(ps -p "$old_pid" -o args=)"
         old_group="$(ps -p "$old_pid" -o pgid= | tr -d ' ')"
-        if [[ "$old_command" != *'ros2 launch machining_demo demo.launch.py'* || "$old_group" != "$old_pid" ]]; then
+        if [[ ( "$old_command" != *'ros2 launch machining_demo demo.launch.py'* &&
+                "$old_command" != *'ros2 launch --noninteractive machining_demo demo.launch.py'* ) ||
+              "$old_group" != "$old_pid" ]]; then
             echo '保存的进程标识与 A2 演示不匹配，未终止任何进程。' >&2
             exit 1
         fi
@@ -39,7 +41,8 @@ source "$workspace_dir/install/setup.bash"
 set -u
 cd -- "$workspace_dir"
 echo '>> 启动 A2 演示（Ctrl+C 可退出）...'
-setsid ros2 launch machining_demo demo.launch.py "$@" &
+# 独立会话里的子节点不会收到脚本终端的 Ctrl+C；让 launch 主动转发 SIGINT。
+setsid ros2 launch --noninteractive machining_demo demo.launch.py "$@" &
 demo_pid=$!
 printf '%s\n' "$demo_pid" > "$pid_file"
 

@@ -55,8 +55,21 @@ ros2 launch machining_demo demo.launch.py repeat_cycle:=false
 > 推荐从第一次启动就使用当前仓库的 `bash restart_demo.sh`。脚本只清理自己管理的演示进程组，
 > 再启动当前仓库的构建结果；可附加 launch 参数，如 `bash restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0`。
 > 手动 `ros2 launch` 启动的旧实例，需要先在原终端按 Ctrl+C 退出。
+> 按一次 Ctrl+C 后等待进程退出日志结束并回到命令提示符，再启动下一次。
+> 脚本使用 `--noninteractive`，让独立会话中的 launch 主动向子节点传递退出信号。
 > 另外注意：电脑休眠唤醒后 ROS 进程会失去 DDS 发现能力（服务调用卡在
 > "waiting for service"），此时同样用 restart_demo.sh 重启即可。
+
+关闭后怀疑进程残留时，可先查看操作系统进程（此命令只查看，不结束进程）：
+
+```bash
+ps -eo pid,ppid,stat,args | grep -E '[m]achining_demo|[m]ove_group|[r]os2_control_node|[r]obot_state_publisher|[r]viz2'
+```
+
+输出可能包含其他 ROS 工程使用的公共节点，应结合命令路径和父进程确认归属。
+`ros2 node list` 的显示也可能受 DDS 发现和 CLI 缓存影响，不能单独作为残留进程的证明。
+确认进程属于已停止的本演示后，可以对具体 PID 发 `kill -INT PID`；若启动器还在，优先对其 PID 发信号。
+脚本只能管理由它启动的实例；首次改用脚本前，仍需退出此前手动启动的仿真。
 
 ### 常用参数
 
