@@ -1,0 +1,90 @@
+time,source,event,detail,slot
+13:51:01.482,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+13:51:01.560,machine,BUSY,BUSY,0
+13:51:06.560,machine,READY,READY,0
+13:51:06.569,task,PICK,工位就绪，从槽位 0 取料,0
+13:51:06.672,arm,feedback,取料：槽位 0 -> 预抓取点,0
+13:51:06.672,arm,feedback,夹爪张开,0
+13:51:06.694,arm,feedback,规划中: 夹爪张开,0
+13:51:06.850,arm,feedback,执行完成: 夹爪张开,0
+13:51:06.872,arm,feedback,规划中: 预抓取点(槽位0),0
+13:51:10.041,arm,feedback,执行完成: 预抓取点(槽位0),0
+13:51:10.063,arm,feedback,直线规划中: 抓取点(槽位0),0
+13:51:10.790,arm,feedback,执行完成: 抓取点(槽位0),0
+13:51:10.811,arm,feedback,工件 workpiece_0 已附着到末端,0
+13:51:10.811,arm,feedback,夹爪闭合,0
+13:51:10.832,arm,feedback,规划中: 夹爪闭合,0
+13:51:10.987,arm,feedback,执行完成: 夹爪闭合,0
+13:51:11.010,arm,feedback,直线规划中: 提起工件,0
+13:51:11.734,arm,feedback,执行完成: 提起工件,0
+13:51:11.869,task,PLACE,取料完成，准备上料,0
+13:51:11.994,arm,feedback,规划中: 上料预放置点,0
+13:51:15.063,arm,feedback,执行完成: 上料预放置点,0
+13:51:15.085,arm,feedback,直线规划中: 放置点,0
+13:51:16.161,arm,feedback,执行完成: 放置点,0
+13:51:16.162,arm,feedback,夹爪张开,0
+13:51:16.184,arm,feedback,规划中: 夹爪张开,0
+13:51:16.340,arm,feedback,执行完成: 夹爪张开,0
+13:51:16.363,arm,feedback,工件已放入加工台，开始等待加工,0
+13:51:16.385,arm,feedback,直线规划中: 退出加工台,0
+13:51:17.464,arm,feedback,执行完成: 退出加工台,0
+13:51:17.469,task,WAIT_MACHINING,上料完成，等待工位加工结束信号,0
+13:51:17.559,machine,MACHINING,加工进度 0%,0
+13:51:17.660,machine,MACHINING,加工进度 2%,0
+13:51:17.760,machine,MACHINING,加工进度 4%,0
+13:51:17.860,machine,MACHINING,加工进度 6%,0
+13:51:17.960,machine,MACHINING,加工进度 8%,0
+13:51:18.060,machine,MACHINING,加工进度 10%,0
+13:51:18.159,machine,MACHINING,加工进度 12%,0
+13:51:18.259,machine,MACHINING,加工进度 13%,0
+13:51:18.360,machine,MACHINING,加工进度 16%,0
+13:51:18.460,machine,MACHINING,加工进度 18%,0
+13:51:18.560,machine,MACHINING,加工进度 20%,0
+13:51:18.660,machine,MACHINING,加工进度 22%,0
+13:51:18.760,machine,MACHINING,加工进度 24%,0
+13:51:18.860,machine,MACHINING,加工进度 26%,0
+13:51:18.960,machine,MACHINING,加工进度 28%,0
+13:51:19.060,machine,MACHINING,加工进度 30%,0
+13:51:19.160,machine,MACHINING,加工进度 32%,0
+13:51:19.260,machine,MACHINING,加工进度 34%,0
+13:51:19.360,machine,MACHINING,加工进度 36%,0
+13:51:19.460,machine,MACHINING,加工进度 38%,0
+13:51:19.560,machine,MACHINING,加工进度 40%,0
+13:51:19.660,machine,MACHINING,加工进度 42%,0
+13:51:19.759,machine,MACHINING,加工进度 44%,0
+13:51:19.860,machine,MACHINING,加工进度 46%,0
+13:51:19.960,machine,MACHINING,加工进度 48%,0
+13:51:20.060,machine,MACHINING,加工进度 50%,0
+13:51:20.159,machine,MACHINING,加工进度 52%,0
+13:51:20.260,machine,MACHINING,加工进度 54%,0
+13:51:20.360,machine,MACHINING,加工进度 56%,0
+13:51:20.460,machine,MACHINING,加工进度 58%,0
+13:51:20.560,machine,MACHINING,加工进度 60%,0
+13:51:20.660,machine,MACHINING,加工进度 62%,0
+13:51:20.760,machine,MACHINING,加工进度 64%,0
+13:51:20.860,machine,MACHINING,加工进度 66%,0
+13:51:20.960,machine,MACHINING,加工进度 68%,0
+13:51:21.060,machine,MACHINING,加工进度 70%,0
+13:51:21.160,machine,MACHINING,加工进度 72%,0
+13:51:21.260,machine,MACHINING,加工进度 74%,0
+13:51:21.360,machine,MACHINING,加工进度 76%,0
+13:51:21.460,machine,MACHINING,加工进度 78%,0
+13:51:21.560,machine,MACHINING,加工进度 80%,0
+13:51:21.660,machine,MACHINING,加工进度 82%,0
+13:51:21.760,machine,MACHINING,加工进度 84%,0
+13:51:21.860,machine,MACHINING,加工进度 86%,0
+13:51:21.960,machine,MACHINING,加工进度 88%,0
+13:51:22.059,machine,MACHINING,加工进度 90%,0
+13:51:22.160,machine,MACHINING,加工进度 92%,0
+13:51:22.260,machine,MACHINING,加工进度 94%,0
+13:51:22.360,machine,MACHINING,加工进度 96%,0
+13:51:22.460,machine,MACHINING,加工进度 98%,0
+13:51:22.560,machine,DONE,DONE,0
+13:51:22.568,task,RETRIEVE,加工完成，取回工件,0
+13:51:22.691,arm,feedback,规划中: 取回预抓取点,0
+13:51:23.296,arm,feedback,执行完成: 取回预抓取点,0
+13:51:23.320,arm,feedback,直线规划中: 取回抓取点,0
+13:51:23.341,arm,feedback,"失败现场：panda_joint1=-0.50465, panda_joint2=-0.65804, panda_joint3=-1.00347, panda_joint4=-3.07180, panda_joint5=-0.91921, panda_joint6=2.46256, panda_joint7=0.18214, panda_finger_joint1=0.03462, panda_finger_joint2=0.03462；附着=None；加工台工件=workpiece_0",0
+13:51:23.363,arm,feedback,失败现场：当前状态有效=True；碰撞对=无,0
+13:51:23.365,arm,feedback,取回抓取点：直线路径不完整 (58.33%)，SUCCESS (1)，不执行部分轨迹,0
+13:51:23.370,task,ABORTED,retrieve失败: 取回抓取点：直线路径不完整 (58.33%)，SUCCESS (1)，不执行部分轨迹,0

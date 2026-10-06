@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: DONE
+槽位: 0
+说明: 第 5 轮完成：工件已放回，机械臂回零成功，上下料循环完成；3.0 秒后自动开始下一轮
+本轮任务时长: 28.6 秒
+任务经过的状态: WAIT_STATION -> PICK -> PLACE -> WAIT_MACHINING -> RETRIEVE -> RETURN -> DONE
+A2 阶段验收: 通过
+事件总数: 108
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261006_134214_415594_8be4bf5fc57a4859a3fbc1462babd33d.csv

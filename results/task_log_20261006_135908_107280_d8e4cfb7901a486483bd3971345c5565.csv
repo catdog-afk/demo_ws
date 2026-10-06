@@ -1,0 +1,26 @@
+time,source,event,detail,slot
+13:59:08.107,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+13:59:08.132,machine,READY,READY,0
+13:59:08.207,task,PICK,工位就绪，从槽位 0 取料,0
+13:59:08.309,arm,feedback,取料：槽位 0 -> 预抓取点,0
+13:59:08.310,arm,feedback,夹爪张开,0
+13:59:08.332,arm,feedback,规划中: 夹爪张开,0
+13:59:08.490,arm,feedback,执行完成: 夹爪张开,0
+13:59:08.514,arm,feedback,规划中: 预抓取点(槽位0),0
+13:59:11.638,arm,feedback,执行完成: 预抓取点(槽位0),0
+13:59:11.661,arm,feedback,直线规划中: 抓取点(槽位0),0
+13:59:12.238,arm,feedback,执行完成: 抓取点(槽位0),0
+13:59:12.260,arm,feedback,工件 workpiece_0 已附着到末端,0
+13:59:12.260,arm,feedback,夹爪闭合,0
+13:59:12.282,arm,feedback,规划中: 夹爪闭合,0
+13:59:12.435,arm,feedback,执行完成: 夹爪闭合,0
+13:59:12.456,arm,feedback,直线规划中: 提起工件,0
+13:59:13.032,arm,feedback,执行完成: 提起工件,0
+13:59:13.206,task,PLACE,取料完成，准备上料,0
+13:59:13.330,arm,feedback,规划中: 上料预放置点,0
+13:59:17.346,arm,feedback,执行完成: 上料预放置点,0
+13:59:17.368,arm,feedback,直线规划中: 放置点,0
+13:59:17.390,arm,feedback,"失败现场：panda_joint1=-0.51729, panda_joint2=-0.64514, panda_joint3=-0.98542, panda_joint4=-3.06997, panda_joint5=-0.92446, panda_joint6=2.46207, panda_joint7=0.19708, panda_finger_joint1=0.00043, panda_finger_joint2=0.00043；附着=workpiece_0；加工台工件=None",0
+13:59:17.415,arm,feedback,失败现场：当前状态有效=True；碰撞对=无,0
+13:59:17.416,arm,feedback,放置点：直线路径不完整 (72.73%)，SUCCESS (1)，不执行部分轨迹,0
+13:59:17.507,task,ABORTED,place失败: 放置点：直线路径不完整 (72.73%)，SUCCESS (1)，不执行部分轨迹,0

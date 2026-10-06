@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: place失败: 放置点：直线路径不完整 (72.73%)，SUCCESS (1)，不执行部分轨迹
+本轮任务时长: 9.4 秒
+任务经过的状态: WAIT_STATION -> PICK -> PLACE -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 25
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261006_135908_107280_d8e4cfb7901a486483bd3971345c5565.csv
