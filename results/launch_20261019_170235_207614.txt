@@ -1,0 +1,452 @@
+[INFO] [launch]: All log files can be found below /home/catdog/.ros/log/2026-10-19-17-02-36-139271-LY-207639
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [move_group-1]: process started with pid [207643]
+[INFO] [ros2_control_node-2]: process started with pid [207645]
+[INFO] [spawner-3]: process started with pid [207647]
+[INFO] [spawner-4]: process started with pid [207649]
+[INFO] [spawner-5]: process started with pid [207651]
+[INFO] [static_transform_publisher-6]: process started with pid [207653]
+[INFO] [robot_state_publisher-7]: process started with pid [207655]
+[INFO] [static_transform_publisher-8]: process started with pid [207657]
+[INFO] [rviz2-9]: process started with pid [207659]
+[INFO] [scene_manager-10]: process started with pid [207661]
+[INFO] [virtual_camera-11]: process started with pid [207663]
+[INFO] [vision_locator-12]: process started with pid [207665]
+[INFO] [machine_simulator-13]: process started with pid [207667]
+[INFO] [arm_controller-14]: process started with pid [207669]
+[INFO] [task_manager-15]: process started with pid [207671]
+[INFO] [result_recorder-16]: process started with pid [207673]
+[static_transform_publisher-6] [WARN] [1792400556.350118714] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-6] [INFO] [1792400556.361150678] [static_transform_publisher]: Spinning until stopped - publishing transform
+[static_transform_publisher-6] translation: ('0.000000', '0.000000', '0.000000')
+[static_transform_publisher-6] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-6] from 'world' to 'panda_link0'
+[rviz2-9] Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.
+[robot_state_publisher-7] [INFO] [1792400556.375676507] [robot_state_publisher]: got segment panda_hand
+[robot_state_publisher-7] [INFO] [1792400556.375805323] [robot_state_publisher]: got segment panda_leftfinger
+[robot_state_publisher-7] [INFO] [1792400556.375819858] [robot_state_publisher]: got segment panda_link0
+[robot_state_publisher-7] [INFO] [1792400556.375829506] [robot_state_publisher]: got segment panda_link1
+[robot_state_publisher-7] [INFO] [1792400556.375838098] [robot_state_publisher]: got segment panda_link2
+[robot_state_publisher-7] [INFO] [1792400556.375846377] [robot_state_publisher]: got segment panda_link3
+[robot_state_publisher-7] [INFO] [1792400556.375854945] [robot_state_publisher]: got segment panda_link4
+[robot_state_publisher-7] [INFO] [1792400556.375863111] [robot_state_publisher]: got segment panda_link5
+[robot_state_publisher-7] [INFO] [1792400556.375871042] [robot_state_publisher]: got segment panda_link6
+[robot_state_publisher-7] [INFO] [1792400556.375879223] [robot_state_publisher]: got segment panda_link7
+[robot_state_publisher-7] [INFO] [1792400556.375887474] [robot_state_publisher]: got segment panda_link8
+[robot_state_publisher-7] [INFO] [1792400556.375895445] [robot_state_publisher]: got segment panda_rightfinger
+[static_transform_publisher-8] [INFO] [1792400556.388627383] [overhead_camera_tf]: Spinning until stopped - publishing transform
+[static_transform_publisher-8] translation: ('0.450000', '0.250000', '1.000000')
+[static_transform_publisher-8] rotation: ('1.000000', '0.000000', '0.000000', '0.000000')
+[static_transform_publisher-8] from 'panda_link0' to 'overhead_camera_optical_frame'
+[ros2_control_node-2] [WARN] [1792400556.389416123] [controller_manager]: [Deprecated] Passing the robot description parameter directly to the control_manager node is deprecated. Use '~/robot_description' topic from 'robot_state_publisher' instead.
+[ros2_control_node-2] [INFO] [1792400556.389773882] [resource_manager]: Loading hardware 'PandaFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390376044] [resource_manager]: Initialize hardware 'PandaFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390452137] [resource_manager]: Successful initialization of hardware 'PandaFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.390480852] [resource_manager]: Loading hardware 'PandaHandFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390499351] [resource_manager]: Initialize hardware 'PandaHandFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390520807] [resource_manager]: Successful initialization of hardware 'PandaHandFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.390572478] [resource_manager]: 'configure' hardware 'PandaHandFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390583277] [resource_manager]: Successful 'configure' of hardware 'PandaHandFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.390591070] [resource_manager]: 'activate' hardware 'PandaHandFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390598414] [resource_manager]: Successful 'activate' of hardware 'PandaHandFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.390604795] [resource_manager]: 'configure' hardware 'PandaFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390611548] [resource_manager]: Successful 'configure' of hardware 'PandaFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.390621688] [resource_manager]: 'activate' hardware 'PandaFakeSystem' 
+[ros2_control_node-2] [INFO] [1792400556.390628071] [resource_manager]: Successful 'activate' of hardware 'PandaFakeSystem'
+[ros2_control_node-2] [INFO] [1792400556.399333860] [controller_manager]: update rate is 100 Hz
+[ros2_control_node-2] [INFO] [1792400556.399380438] [controller_manager]: Spawning controller_manager RT thread with scheduler priority: 50
+[ros2_control_node-2] [WARN] [1792400556.399501353] [controller_manager]: Could not enable FIFO RT scheduling policy: with error number <1>(Operation not permitted). See [https://control.ros.org/master/doc/ros2_control/controller_manager/doc/userdoc.html] for details on how to enable realtime scheduling.
+[move_group-1] [INFO] [1792400556.407212920] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00232866 seconds
+[move_group-1] [INFO] [1792400556.407298183] [moveit_robot_model.robot_model]: Loading robot model 'panda'...
+[move_group-1] [INFO] [1792400556.452228185] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on 'monitored_planning_scene'
+[move_group-1] [INFO] [1792400556.452432780] [moveit.ros_planning_interface.moveit_cpp]: Listening to 'joint_states' for joint states
+[move_group-1] [INFO] [1792400556.453861108] [moveit_ros.current_state_monitor]: Listening to joint states on topic 'joint_states'
+[move_group-1] [INFO] [1792400556.454303219] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/attached_collision_object' for attached collision objects
+[move_group-1] [INFO] [1792400556.454323265] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[move_group-1] [INFO] [1792400556.454669115] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[move_group-1] [INFO] [1792400556.454686178] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting world geometry update monitor for collision objects, attached objects, octomap updates.
+[move_group-1] [INFO] [1792400556.455095311] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to 'collision_object'
+[move_group-1] [INFO] [1792400556.455480061] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to 'planning_scene_world' for planning scene world geometry
+[move_group-1] [WARN] [1792400556.455863640] [moveit.ros.occupancy_map_monitor.middleware_handle]: Resolution not specified for Octomap. Assuming resolution = 0.1 instead
+[move_group-1] [ERROR] [1792400556.455882151] [moveit.ros.occupancy_map_monitor.middleware_handle]: No 3D sensor plugin(s) defined for octomap updates
+[move_group-1] [INFO] [1792400556.457077190] [moveit.ros_planning_interface.moveit_cpp]: Loading planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400556.475106889] [moveit.ros_planning.planning_pipeline]: Using planning interface 'OMPL'
+[move_group-1] [INFO] [1792400556.478304626] [moveit_ros.add_time_optimal_parameterization]: Param 'ompl.path_tolerance' was set to 0.001000
+[move_group-1] [INFO] [1792400556.478335811] [moveit_ros.add_time_optimal_parameterization]: Param 'ompl.resample_dt' was set to 0.020000
+[move_group-1] [INFO] [1792400556.478343814] [moveit_ros.add_time_optimal_parameterization]: Param 'ompl.min_angle_change' was not set. Using default value: 0.001000
+[move_group-1] [INFO] [1792400556.478383946] [moveit_ros.fix_workspace_bounds]: Param 'ompl.default_workspace_bounds' was not set. Using default value: 10.000000
+[move_group-1] [INFO] [1792400556.478403202] [moveit_ros.fix_start_state_bounds]: Param 'ompl.start_state_max_bounds_error' was set to 0.100000
+[move_group-1] [INFO] [1792400556.478411421] [moveit_ros.fix_start_state_bounds]: Param 'ompl.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.478427091] [moveit_ros.fix_start_state_collision]: Param 'ompl.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.478434310] [moveit_ros.fix_start_state_collision]: Param 'ompl.jiggle_fraction' was not set. Using default value: 0.020000
+[move_group-1] [INFO] [1792400556.478441835] [moveit_ros.fix_start_state_collision]: Param 'ompl.max_sampling_attempts' was not set. Using default value: 100
+[move_group-1] [INFO] [1792400556.478456227] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Add Time Optimal Parameterization'
+[move_group-1] [INFO] [1792400556.478462436] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Resolve constraint frames to robot links'
+[move_group-1] [INFO] [1792400556.478466827] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Workspace Bounds'
+[move_group-1] [INFO] [1792400556.478471291] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Bounds'
+[move_group-1] [INFO] [1792400556.478475446] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State In Collision'
+[move_group-1] [INFO] [1792400556.478479571] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Path Constraints'
+[move_group-1] [INFO] [1792400556.481873974] [moveit.ros_planning_interface.moveit_cpp]: Loading planning pipeline 'chomp'
+[move_group-1] [INFO] [1792400556.486045454] [moveit.ros_planning.planning_pipeline]: Using planning interface 'CHOMP'
+[move_group-1] [INFO] [1792400556.487982797] [moveit_ros.add_time_optimal_parameterization]: Param 'chomp.path_tolerance' was not set. Using default value: 0.100000
+[move_group-1] [INFO] [1792400556.488010142] [moveit_ros.add_time_optimal_parameterization]: Param 'chomp.resample_dt' was not set. Using default value: 0.100000
+[move_group-1] [INFO] [1792400556.488017913] [moveit_ros.add_time_optimal_parameterization]: Param 'chomp.min_angle_change' was not set. Using default value: 0.001000
+[move_group-1] [INFO] [1792400556.488038055] [moveit_ros.fix_workspace_bounds]: Param 'chomp.default_workspace_bounds' was not set. Using default value: 10.000000
+[move_group-1] [INFO] [1792400556.488057673] [moveit_ros.fix_start_state_bounds]: Param 'chomp.start_state_max_bounds_error' was set to 0.100000
+[move_group-1] [INFO] [1792400556.488065253] [moveit_ros.fix_start_state_bounds]: Param 'chomp.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.488080668] [moveit_ros.fix_start_state_collision]: Param 'chomp.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.488087650] [moveit_ros.fix_start_state_collision]: Param 'chomp.jiggle_fraction' was not set. Using default value: 0.020000
+[move_group-1] [INFO] [1792400556.488093001] [moveit_ros.fix_start_state_collision]: Param 'chomp.max_sampling_attempts' was not set. Using default value: 100
+[move_group-1] [INFO] [1792400556.488107287] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Add Time Optimal Parameterization'
+[move_group-1] [INFO] [1792400556.488113218] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Workspace Bounds'
+[move_group-1] [INFO] [1792400556.488118067] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Bounds'
+[move_group-1] [INFO] [1792400556.488148039] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State In Collision'
+[move_group-1] [INFO] [1792400556.488154471] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Path Constraints'
+[move_group-1] [INFO] [1792400556.489206014] [moveit.ros_planning_interface.moveit_cpp]: Loading planning pipeline 'pilz_industrial_motion_planner'
+[move_group-1] [INFO] [1792400556.492749101] [moveit.pilz_industrial_motion_planner.joint_limits_aggregator]: Reading limits from namespace robot_description_planning
+[move_group-1] [WARN] [1792400556.493594637] [moveit.pilz_industrial_motion_planner.joint_limits_aggregator]: Multi-DOF-Joint 'virtual_joint' not supported.
+[move_group-1] [WARN] [1792400556.493628500] [moveit.pilz_industrial_motion_planner.joint_limits_aggregator]: Multi-DOF-Joint 'virtual_joint' not supported.
+[move_group-1] [INFO] [1792400556.500254395] [moveit.pilz_industrial_motion_planner]: Available plugins: pilz_industrial_motion_planner/PlanningContextLoaderCIRC pilz_industrial_motion_planner/PlanningContextLoaderLIN pilz_industrial_motion_planner/PlanningContextLoaderPTP 
+[move_group-1] [INFO] [1792400556.500285023] [moveit.pilz_industrial_motion_planner]: About to load: pilz_industrial_motion_planner/PlanningContextLoaderCIRC
+[move_group-1] [INFO] [1792400556.502205416] [moveit.pilz_industrial_motion_planner]: Registered Algorithm [CIRC]
+[move_group-1] [INFO] [1792400556.502235399] [moveit.pilz_industrial_motion_planner]: About to load: pilz_industrial_motion_planner/PlanningContextLoaderLIN
+[move_group-1] [INFO] [1792400556.503854414] [moveit.pilz_industrial_motion_planner]: Registered Algorithm [LIN]
+[move_group-1] [INFO] [1792400556.503881995] [moveit.pilz_industrial_motion_planner]: About to load: pilz_industrial_motion_planner/PlanningContextLoaderPTP
+[move_group-1] [INFO] [1792400556.505054780] [moveit.pilz_industrial_motion_planner]: Registered Algorithm [PTP]
+[move_group-1] [INFO] [1792400556.505079372] [moveit.ros_planning.planning_pipeline]: Using planning interface 'Pilz Industrial Motion Planner'
+[move_group-1] [INFO] [1792400556.507091710] [moveit_ros.fix_workspace_bounds]: Param 'pilz_industrial_motion_planner.default_workspace_bounds' was not set. Using default value: 10.000000
+[move_group-1] [INFO] [1792400556.507248265] [moveit_ros.fix_start_state_bounds]: Param 'pilz_industrial_motion_planner.start_state_max_bounds_error' was not set. Using default value: 0.050000
+[move_group-1] [INFO] [1792400556.507336062] [moveit_ros.fix_start_state_bounds]: Param 'pilz_industrial_motion_planner.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.507362730] [moveit_ros.fix_start_state_collision]: Param 'pilz_industrial_motion_planner.start_state_max_dt' was not set. Using default value: 0.500000
+[move_group-1] [INFO] [1792400556.507403528] [moveit_ros.fix_start_state_collision]: Param 'pilz_industrial_motion_planner.jiggle_fraction' was not set. Using default value: 0.020000
+[move_group-1] [INFO] [1792400556.507410051] [moveit_ros.fix_start_state_collision]: Param 'pilz_industrial_motion_planner.max_sampling_attempts' was not set. Using default value: 100
+[move_group-1] [INFO] [1792400556.507427284] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Workspace Bounds'
+[move_group-1] [INFO] [1792400556.507433441] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Bounds'
+[move_group-1] [INFO] [1792400556.507438002] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State In Collision'
+[move_group-1] [INFO] [1792400556.507442274] [moveit.ros_planning.planning_pipeline]: Using planning request adapter 'Fix Start State Path Constraints'
+[move_group-1] [INFO] [1792400556.578227402] [moveit.plugins.moveit_simple_controller_manager]: Added FollowJointTrajectory controller for panda_arm_controller
+[move_group-1] [INFO] [1792400556.578269891] [moveit.plugins.moveit_simple_controller_manager]: Max effort set to 0.0
+[move_group-1] [INFO] [1792400556.580614822] [moveit.plugins.moveit_simple_controller_manager]: Added GripperCommand controller for panda_hand_controller
+[move_group-1] [INFO] [1792400556.580780133] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400556.580801111] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400556.581493904] [moveit_ros.trajectory_execution_manager]: Trajectory execution is managing controllers
+[move_group-1] [INFO] [1792400556.581511353] [move_group.move_group]: MoveGroup debug mode is ON
+[move_group-1] [INFO] [1792400556.596339562] [move_group.move_group]: 
+[move_group-1] 
+[move_group-1] ********************************************************
+[move_group-1] * MoveGroup using: 
+[move_group-1] *     - ApplyPlanningSceneService
+[move_group-1] *     - ClearOctomapService
+[move_group-1] *     - CartesianPathService
+[move_group-1] *     - ExecuteTrajectoryAction
+[move_group-1] *     - GetPlanningSceneService
+[move_group-1] *     - KinematicsService
+[move_group-1] *     - MoveAction
+[move_group-1] *     - MotionPlanService
+[move_group-1] *     - QueryPlannersService
+[move_group-1] *     - StateValidationService
+[move_group-1] ********************************************************
+[move_group-1] 
+[move_group-1] [INFO] [1792400556.596379685] [moveit_move_group_capabilities_base.move_group_context]: MoveGroup context using planning plugin ompl_interface/OMPLPlanner
+[move_group-1] [INFO] [1792400556.596387026] [moveit_move_group_capabilities_base.move_group_context]: MoveGroup context initialization complete
+[move_group-1] [96mLoading 'move_group/ApplyPlanningSceneService'...
+[move_group-1] [0m[96mLoading 'move_group/ClearOctomapService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupCartesianPathService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupExecuteTrajectoryAction'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupGetPlanningSceneService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupKinematicsService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupMoveAction'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupPlanService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupQueryPlannersService'...
+[move_group-1] [0m[96mLoading 'move_group/MoveGroupStateValidationService'...
+[move_group-1] [0m[92m
+[move_group-1] You can start planning now!
+[move_group-1] 
+[result_recorder-16] [INFO] [1792400556.667644760] [result_recorder]: 运行记录节点就绪，输出目录: /home/catdog/demo_ws/results
+[ros2_control_node-2] [INFO] [1792400556.671852193] [controller_manager]: Loading controller 'panda_hand_controller'
+[rviz2-9] [INFO] [1792400556.691006750] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-9] [INFO] [1792400556.691088360] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[spawner-5] [INFO] [1792400556.716023175] [spawner_panda_hand_controller]: [94mLoaded [1mpanda_hand_controller[0m
+[rviz2-9] [INFO] [1792400556.717298377] [rviz2]: Stereo is NOT SUPPORTED
+[ros2_control_node-2] [INFO] [1792400556.717862592] [controller_manager]: Configuring controller 'panda_hand_controller'
+[ros2_control_node-2] [INFO] [1792400556.718012891] [panda_hand_controller]: Action status changes will be monitored at 20.000000 Hz.
+[machine_simulator-13] [INFO] [1792400556.720739358] [machine_simulator]: 机床初始化完成，初始状态 BUSY（模拟工位占用 10 秒）
+[ros2_control_node-2] [INFO] [1792400556.766520266] [controller_manager]: Loading controller 'panda_arm_controller'
+[ros2_control_node-2] [WARN] [1792400556.782990714] [panda_arm_controller]: [Deprecated]: "allow_nonzero_velocity_at_trajectory_end" is set to true. The default behavior will change to false.
+[scene_manager-10] [INFO] [1792400556.802661219] [scene_manager]: 已发布静态 TF：table / tray / machine
+[scene_manager-10] [INFO] [1792400556.804298352] [scene_manager]: 正在构建规划场景（桌面 / 料盘 / 加工台 / 工件）...
+[scene_manager-10] [INFO] [1792400556.806522818] [scene_manager]: 场景构建完成：桌面 + 料盘(3 个工件) + 加工台
+[spawner-4] [INFO] [1792400556.809738501] [spawner_panda_arm_controller]: [94mLoaded [1mpanda_arm_controller[0m
+[ros2_control_node-2] [INFO] [1792400556.819998604] [controller_manager]: Configuring controller 'panda_arm_controller'
+[ros2_control_node-2] [INFO] [1792400556.820148578] [panda_arm_controller]: No specific joint names are used for command interfaces. Using 'joints' parameter.
+[ros2_control_node-2] [INFO] [1792400556.820162057] [panda_arm_controller]: Command interfaces are [position] and state interfaces are [position velocity].
+[ros2_control_node-2] [INFO] [1792400556.820175530] [panda_arm_controller]: Using 'splines' interpolation method.
+[spawner-5] [INFO] [1792400556.820796003] [spawner_panda_hand_controller]: [92mConfigured and activated [1mpanda_hand_controller[0m
+[ros2_control_node-2] [INFO] [1792400556.820855888] [panda_arm_controller]: Controller state will be published at 50.00 Hz.
+[ros2_control_node-2] [INFO] [1792400556.822755383] [panda_arm_controller]: Action status changes will be monitored at 20.00 Hz.
+[ros2_control_node-2] [INFO] [1792400556.831934684] [controller_manager]: Loading controller 'joint_state_broadcaster'
+[task_manager-15] [INFO] [1792400556.840414634] [task_manager]: [任务状态] IDLE - 任务状态机就绪
+[spawner-3] [INFO] [1792400556.860574473] [spawner_joint_state_broadcaster]: [94mLoaded [1mjoint_state_broadcaster[0m
+[ros2_control_node-2] [INFO] [1792400556.869928342] [controller_manager]: Configuring controller 'joint_state_broadcaster'
+[ros2_control_node-2] [INFO] [1792400556.870008179] [joint_state_broadcaster]: 'joints' or 'interfaces' parameter is empty. All available state interfaces will be published
+[spawner-4] [INFO] [1792400556.870724155] [spawner_panda_arm_controller]: [92mConfigured and activated [1mpanda_arm_controller[0m
+[spawner-3] [INFO] [1792400556.900945953] [spawner_joint_state_broadcaster]: [92mConfigured and activated [1mjoint_state_broadcaster[0m
+[rviz2-9] [INFO] [1792400556.915416421] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-9] [INFO] [1792400556.931078926] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00394651 seconds
+[rviz2-9] [INFO] [1792400556.931138312] [moveit_robot_model.robot_model]: Loading robot model 'panda'...
+[rviz2-9] [INFO] [1792400556.966744886] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[rviz2-9] [INFO] [1792400556.967943516] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/monitored_planning_scene'
+[INFO] [spawner-5]: process has finished cleanly [pid 207651]
+[arm_controller-14] [INFO] [1792400557.004110991] [arm_controller]: 机械臂控制节点就绪，服务 /arm/command 已创建
+[INFO] [spawner-4]: process has finished cleanly [pid 207649]
+[INFO] [spawner-3]: process has finished cleanly [pid 207647]
+[virtual_camera-11] [INFO] [1792400558.055437546] [virtual_camera]: 相机成像正常，原始图像持续更新
+[task_manager-15] [INFO] [1792400561.842286269] [task_manager]: [任务状态] WAIT_STATION - 槽位 0：等待场景、服务及工位 READY
+[machine_simulator-13] [INFO] [1792400566.703613840] [machine_simulator]: 工位空闲就绪，等待上料
+[task_manager-15] [INFO] [1792400566.728852003] [task_manager]: [任务状态] PICK - 工位就绪，从槽位 0 取料
+[arm_controller-14] [INFO] [1792400566.832728788] [arm_controller]: 收到动作指令: pick (slot=0)
+[arm_controller-14] [INFO] [1792400566.854243164] [arm_controller]: 视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)
+[arm_controller-14] [INFO] [1792400566.877420463] [arm_controller]: 取料：槽位 0 -> 预抓取点
+[arm_controller-14] [INFO] [1792400566.878415686] [arm_controller]: 夹爪张开
+[arm_controller-14] [INFO] [1792400566.899920339] [arm_controller]: 规划中: 夹爪张开
+[move_group-1] [INFO] [1792400566.904158991] [moveit_move_group_default_capabilities.move_action_capability]: Received request
+[move_group-1] [INFO] [1792400566.904504229] [moveit_move_group_default_capabilities.move_action_capability]: executing..
+[move_group-1] [INFO] [1792400566.910030028] [moveit_move_group_default_capabilities.move_action_capability]: Planning request received for MoveGroup action. Forwarding to planning pipeline.
+[move_group-1] [INFO] [1792400566.910051567] [moveit_move_group_capabilities_base.move_group_capability]: Using planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400566.911477146] [moveit.ompl_planning.model_based_planning_context]: Planner configuration 'hand' will use planner 'geometric::RRTConnect'. Additional configuration parameters will be set when the planner is constructed.
+[move_group-1] [WARN] [1792400566.929550400] [moveit_trajectory_processing.time_optimal_trajectory_generation]: Joint acceleration limits are not defined. Using the default 1 rad/s^2. You can define acceleration limits in the URDF or joint_limits.yaml.
+[move_group-1] [INFO] [1792400566.931254649] [moveit_move_group_default_capabilities.move_action_capability]: Motion plan was computed successfully.
+[rviz2-9] [ERROR] [1792400566.941759730] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[arm_controller-14] [INFO] [1792400567.005460354] [arm_controller]: 规划完成: 夹爪张开
+[move_group-1] [INFO] [1792400567.007484385] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400567.007654135] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400567.007704658] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.007739552] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.007906135] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400567.010387925] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400567.010474274] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.010518108] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[ros2_control_node-2] [INFO] [1792400567.011308208] [panda_hand_controller]: Received & accepted new action goal
+[move_group-1] [INFO] [1792400567.090638767] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400567.090943867] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400567.108866769] [arm_controller]: 执行完成: 夹爪张开
+[arm_controller-14] [INFO] [1792400567.133279919] [arm_controller]: 规划中: 预抓取点(槽位0)
+[move_group-1] [INFO] [1792400567.136702770] [moveit_move_group_default_capabilities.move_action_capability]: Received request
+[move_group-1] [INFO] [1792400567.136841750] [moveit_move_group_default_capabilities.move_action_capability]: executing..
+[move_group-1] [INFO] [1792400567.140339318] [moveit_move_group_default_capabilities.move_action_capability]: Planning request received for MoveGroup action. Forwarding to planning pipeline.
+[move_group-1] [INFO] [1792400567.140401590] [moveit_move_group_capabilities_base.move_group_capability]: Using planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400567.141879113] [moveit.ompl_planning.model_based_planning_context]: Planner configuration 'panda_arm' will use planner 'geometric::RRTConnect'. Additional configuration parameters will be set when the planner is constructed.
+[move_group-1] [INFO] [1792400567.176595056] [moveit_move_group_default_capabilities.move_action_capability]: Motion plan was computed successfully.
+[rviz2-9] [ERROR] [1792400567.196726741] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[arm_controller-14] [INFO] [1792400567.238137567] [arm_controller]: 规划完成: 预抓取点(槽位0)
+[move_group-1] [INFO] [1792400567.240836780] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400567.241000983] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400567.241043766] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.241072155] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.241204158] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400567.250183846] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400567.250269392] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.250320476] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400567.250569305] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400567.251586142] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400567.251734282] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400567.252036428] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400567.252091613] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400570.039841314] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400570.053654717] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400570.079989151] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400570.080135283] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400570.104790889] [arm_controller]: 执行完成: 预抓取点(槽位0)
+[arm_controller-14] [INFO] [1792400570.126898142] [arm_controller]: 视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)
+[arm_controller-14] [INFO] [1792400570.148277878] [arm_controller]: 直线规划中: 抓取点(槽位0)
+[move_group-1] [INFO] [1792400570.149194998] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Received request to compute Cartesian path
+[move_group-1] [INFO] [1792400570.149499263] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Attempting to follow 1 waypoints for link 'panda_hand' using a step of 0.002000 m and jump threshold 0.000000 (in global reference frame)
+[move_group-1] [INFO] [1792400570.152954495] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Computed Cartesian path with 11 points (followed 100.000000% of requested trajectory)
+[move_group-1] [INFO] [1792400570.171067732] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400570.171282399] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400570.171335895] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400570.171395116] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400570.171506869] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[rviz2-9] [ERROR] [1792400570.172981678] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[move_group-1] [INFO] [1792400570.180411389] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400570.180537650] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400570.180572585] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400570.180791384] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400570.181279444] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400570.181449425] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400570.181934613] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400570.181988207] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400570.809725305] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400570.832581965] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400570.860162712] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400570.860400045] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400570.875837650] [arm_controller]: 执行完成: 抓取点(槽位0)
+[arm_controller-14] [INFO] [1792400570.899655419] [arm_controller]: 工件 workpiece_0 已附着到末端
+[arm_controller-14] [INFO] [1792400570.903202588] [arm_controller]: 夹爪闭合
+[arm_controller-14] [INFO] [1792400570.925164290] [arm_controller]: 规划中: 夹爪闭合
+[move_group-1] [INFO] [1792400570.928954832] [moveit_move_group_default_capabilities.move_action_capability]: Received request
+[move_group-1] [INFO] [1792400570.929135698] [moveit_move_group_default_capabilities.move_action_capability]: executing..
+[move_group-1] [INFO] [1792400570.930152801] [moveit_move_group_default_capabilities.move_action_capability]: Planning request received for MoveGroup action. Forwarding to planning pipeline.
+[move_group-1] [INFO] [1792400570.930183351] [moveit_move_group_capabilities_base.move_group_capability]: Using planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400570.931175349] [moveit.ompl_planning.model_based_planning_context]: Planner configuration 'hand' will use planner 'geometric::RRTConnect'. Additional configuration parameters will be set when the planner is constructed.
+[move_group-1] [INFO] [1792400570.969242429] [moveit_move_group_default_capabilities.move_action_capability]: Motion plan was computed successfully.
+[rviz2-9] [ERROR] [1792400570.973303825] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[arm_controller-14] [INFO] [1792400571.029339972] [arm_controller]: 规划完成: 夹爪闭合
+[move_group-1] [INFO] [1792400571.030175558] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400571.030268045] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400571.030292245] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.030308308] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.030351130] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400571.039982566] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400571.040057471] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.040083273] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[ros2_control_node-2] [INFO] [1792400571.040373817] [panda_hand_controller]: Received & accepted new action goal
+[move_group-1] [INFO] [1792400571.120152413] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400571.120355353] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400571.132272184] [arm_controller]: 执行完成: 夹爪闭合
+[arm_controller-14] [INFO] [1792400571.154022704] [arm_controller]: 直线规划中: 提起工件
+[move_group-1] [INFO] [1792400571.155395550] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Received request to compute Cartesian path
+[move_group-1] [INFO] [1792400571.155987146] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Attempting to follow 1 waypoints for link 'panda_hand' using a step of 0.002000 m and jump threshold 0.000000 (in global reference frame)
+[move_group-1] [INFO] [1792400571.159077076] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Computed Cartesian path with 11 points (followed 100.000000% of requested trajectory)
+[rviz2-9] [ERROR] [1792400571.164879095] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[move_group-1] [INFO] [1792400571.177550716] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400571.177813142] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400571.177882119] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.177924370] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.178047967] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400571.180352065] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400571.180485658] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.180527758] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400571.180759552] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400571.181061327] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400571.181144300] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400571.181432343] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400571.181463438] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400571.829690850] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400571.832084603] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400571.860309151] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400571.860670374] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400571.882145526] [arm_controller]: 执行完成: 提起工件
+[scene_manager-10] [INFO] [1792400571.929459614] [scene_manager]: 槽位 0 更新为 空闲
+[task_manager-15] [INFO] [1792400572.028345301] [task_manager]: [任务状态] PLACE - 取料完成，准备上料
+[arm_controller-14] [INFO] [1792400572.133459059] [arm_controller]: 收到动作指令: place (slot=0)
+[arm_controller-14] [INFO] [1792400572.155966227] [arm_controller]: 规划中: 上料预放置点
+[move_group-1] [INFO] [1792400572.158925865] [moveit_move_group_default_capabilities.move_action_capability]: Received request
+[move_group-1] [INFO] [1792400572.159126098] [moveit_move_group_default_capabilities.move_action_capability]: executing..
+[move_group-1] [INFO] [1792400572.160317033] [moveit_move_group_default_capabilities.move_action_capability]: Planning request received for MoveGroup action. Forwarding to planning pipeline.
+[move_group-1] [INFO] [1792400572.160353738] [moveit_move_group_capabilities_base.move_group_capability]: Using planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400572.161431402] [moveit.ompl_planning.model_based_planning_context]: Planner configuration 'panda_arm' will use planner 'geometric::RRTConnect'. Additional configuration parameters will be set when the planner is constructed.
+[move_group-1] [INFO] [1792400572.212274262] [moveit_move_group_default_capabilities.move_action_capability]: Motion plan was computed successfully.
+[rviz2-9] [ERROR] [1792400572.221609149] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[arm_controller-14] [INFO] [1792400572.259895091] [arm_controller]: 规划完成: 上料预放置点
+[move_group-1] [INFO] [1792400572.262541813] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400572.262721160] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400572.262767752] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400572.262797882] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400572.262959792] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400572.270267624] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400572.270392952] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400572.270440114] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400572.270649895] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400572.271616560] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400572.271760311] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400572.272121880] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400572.272160772] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400575.969694133] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400575.974035636] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400576.000300133] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400576.000517671] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400576.026482908] [arm_controller]: 执行完成: 上料预放置点
+[arm_controller-14] [INFO] [1792400576.047829514] [arm_controller]: 直线规划中: 放置点
+[move_group-1] [INFO] [1792400576.048505714] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Received request to compute Cartesian path
+[move_group-1] [INFO] [1792400576.048781886] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Attempting to follow 1 waypoints for link 'panda_hand' using a step of 0.002000 m and jump threshold 0.000000 (in global reference frame)
+[move_group-1] [INFO] [1792400576.051507321] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Computed Cartesian path with 12 points (followed 100.000000% of requested trajectory)
+[rviz2-9] [ERROR] [1792400576.061393230] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[move_group-1] [INFO] [1792400576.069948445] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400576.070129507] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400576.070176713] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400576.070275684] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400576.070399436] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400576.080162646] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400576.080323163] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400576.080412674] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400576.080693822] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400576.081331675] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400576.081510423] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400576.082057429] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400576.082109045] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400576.799703940] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400576.832691944] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400576.860109331] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400576.860438093] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400576.877178324] [arm_controller]: 执行完成: 放置点
+[arm_controller-14] [INFO] [1792400576.878028001] [arm_controller]: 夹爪张开
+[arm_controller-14] [INFO] [1792400576.899307669] [arm_controller]: 规划中: 夹爪张开
+[move_group-1] [INFO] [1792400576.902971990] [moveit_move_group_default_capabilities.move_action_capability]: Received request
+[move_group-1] [INFO] [1792400576.903224102] [moveit_move_group_default_capabilities.move_action_capability]: executing..
+[move_group-1] [INFO] [1792400576.910290909] [moveit_move_group_default_capabilities.move_action_capability]: Planning request received for MoveGroup action. Forwarding to planning pipeline.
+[move_group-1] [INFO] [1792400576.910358100] [moveit_move_group_capabilities_base.move_group_capability]: Using planning pipeline 'ompl'
+[move_group-1] [INFO] [1792400576.911811071] [moveit.ompl_planning.model_based_planning_context]: Planner configuration 'hand' will use planner 'geometric::RRTConnect'. Additional configuration parameters will be set when the planner is constructed.
+[move_group-1] [INFO] [1792400576.947012963] [moveit_move_group_default_capabilities.move_action_capability]: Motion plan was computed successfully.
+[rviz2-9] [ERROR] [1792400576.957303110] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[arm_controller-14] [INFO] [1792400577.005078164] [arm_controller]: 规划完成: 夹爪张开
+[move_group-1] [INFO] [1792400577.007132427] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400577.007411908] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400577.007481591] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.007522589] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.007640147] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[move_group-1] [INFO] [1792400577.010161504] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400577.010236934] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.010276826] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[ros2_control_node-2] [INFO] [1792400577.010920305] [panda_hand_controller]: Received & accepted new action goal
+[move_group-1] [INFO] [1792400577.090235603] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400577.090467252] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400577.108342472] [arm_controller]: 执行完成: 夹爪张开
+[arm_controller-14] [INFO] [1792400577.133901803] [arm_controller]: 工件已放入加工台，开始等待加工
+[arm_controller-14] [INFO] [1792400577.156551924] [arm_controller]: 直线规划中: 退出加工台
+[move_group-1] [INFO] [1792400577.157749465] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Received request to compute Cartesian path
+[move_group-1] [INFO] [1792400577.158248836] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Attempting to follow 1 waypoints for link 'panda_hand' using a step of 0.002000 m and jump threshold 0.000000 (in global reference frame)
+[move_group-1] [INFO] [1792400577.163748221] [moveit_move_group_default_capabilities.cartersian_path_service_capability]: Computed Cartesian path with 11 points (followed 100.000000% of requested trajectory)
+[move_group-1] [INFO] [1792400577.179625518] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Received goal request
+[move_group-1] [INFO] [1792400577.179861240] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution request received
+[move_group-1] [INFO] [1792400577.179927244] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.179970799] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.180088510] [moveit_ros.trajectory_execution_manager]: Validating trajectory with allowed_start_tolerance 0.01
+[rviz2-9] [ERROR] [1792400577.180842341] [moveit_rviz_plugin_render_tools.trajectory_visualization]: No robot state or robot model loaded
+[move_group-1] [INFO] [1792400577.190325873] [moveit_ros.trajectory_execution_manager]: Starting trajectory execution ...
+[move_group-1] [INFO] [1792400577.190498127] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.190562576] [moveit.plugins.moveit_simple_controller_manager]: Returned 2 controllers in list
+[move_group-1] [INFO] [1792400577.190839065] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: sending trajectory to panda_arm_controller
+[ros2_control_node-2] [INFO] [1792400577.191537255] [panda_arm_controller]: Received new action goal
+[ros2_control_node-2] [INFO] [1792400577.191672165] [panda_arm_controller]: Accepted new action goal
+[move_group-1] [INFO] [1792400577.192004343] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: panda_arm_controller started execution
+[move_group-1] [INFO] [1792400577.192052762] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Goal request accepted!
+[ros2_control_node-2] [INFO] [1792400577.889762357] [panda_arm_controller]: Goal reached, success!
+[move_group-1] [INFO] [1792400577.892608317] [moveit.simple_controller_manager.follow_joint_trajectory_controller_handle]: Controller 'panda_arm_controller' successfully finished
+[move_group-1] [INFO] [1792400577.920310513] [moveit_ros.trajectory_execution_manager]: Completed trajectory execution with status SUCCEEDED ...
+[move_group-1] [INFO] [1792400577.920580211] [moveit_move_group_default_capabilities.execute_trajectory_action_capability]: Execution completed: SUCCEEDED
+[arm_controller-14] [INFO] [1792400577.933898929] [arm_controller]: 执行完成: 退出加工台
+[machine_simulator-13] [INFO] [1792400577.935712873] [machine_simulator]: 检测到工件上料到位
+[machine_simulator-13] [INFO] [1792400578.003409036] [machine_simulator]: 开始加工（预计 30 秒）
+[task_manager-15] [INFO] [1792400578.028853436] [task_manager]: [任务状态] WAIT_MACHINING - 上料完成，等待工位加工结束信号
+[task_manager-15] [INFO] [1792400582.028997128] [task_manager]: [任务状态] TIMEOUT - 加工超时警告：延长一次等待窗口
+[task_manager-15] [INFO] [1792400583.129316638] [task_manager]: [任务状态] WAIT_MACHINING - 超时后继续等待一次；不重新启动加工
+[task_manager-15] [INFO] [1792400586.129065915] [task_manager]: [任务状态] ABORTED - 加工超时，任务中止
+[result_recorder-16] [INFO] [1792400586.132763404] [result_recorder]: 
+[result_recorder-16] ========== A2 运行摘要 ==========
+[result_recorder-16] 结束状态: ABORTED
+[result_recorder-16] 槽位: 0
+[result_recorder-16] 说明: 加工超时，任务中止
+[result_recorder-16] 本轮任务时长: 24.3 秒
+[result_recorder-16] 任务经过的状态: WAIT_STATION -> PICK -> PLACE -> WAIT_MACHINING -> TIMEOUT -> WAIT_MACHINING -> ABORTED
+[result_recorder-16] A2 阶段验收: 任务中止
+[result_recorder-16] 事件总数: 68
+[result_recorder-16] CSV 记录: /home/catdog/demo_ws/results/task_log_20261019_170241_843167_dafe5254c65a45c79b7090cbed51e946.csv
+[rviz2-9] [INFO] [1792400599.333575065] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00310115 seconds
+[rviz2-9] [INFO] [1792400599.333697603] [moveit_robot_model.robot_model]: Loading robot model 'panda'...
+[rviz2-9] [INFO] [1792400599.505316921] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopping planning scene monitor
+[rviz2-9] [INFO] [1792400599.510455684] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00112351 seconds
+[rviz2-9] [INFO] [1792400599.510475579] [moveit_robot_model.robot_model]: Loading robot model 'panda'...
+[rviz2-9] [INFO] [1792400599.534885826] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[rviz2-9] [INFO] [1792400599.535546102] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/monitored_planning_scene'
+[machine_simulator-13] [INFO] [1792400608.103465867] [machine_simulator]: 加工完成，工件可取回

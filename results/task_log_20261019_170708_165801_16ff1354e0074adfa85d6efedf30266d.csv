@@ -1,0 +1,13 @@
+time,source,event,detail,slot
+17:07:08.166,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+17:07:08.219,machine,READY,READY,0
+17:07:08.268,task,PICK,工位就绪，从槽位 0 取料,0
+17:07:08.386,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+17:07:08.409,arm,feedback,取料：槽位 0 -> 预抓取点,0
+17:07:08.410,arm,feedback,夹爪张开,0
+17:07:08.434,arm,feedback,规划中: 夹爪张开,0
+17:07:08.539,arm,feedback,规划完成: 夹爪张开,0
+17:07:08.705,arm,feedback,执行完成: 夹爪张开,0
+17:07:08.727,arm,feedback,规划中: 预抓取点(槽位0),0
+17:07:08.834,arm,feedback,规划完成: 预抓取点(槽位0),0
+17:07:13.241,recorder,INTERRUPTED,节点关闭，任务未完成，保留已有证据,0

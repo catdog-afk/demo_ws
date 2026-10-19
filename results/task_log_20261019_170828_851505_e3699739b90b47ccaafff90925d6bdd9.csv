@@ -1,0 +1,20 @@
+time,source,event,detail,slot
+17:08:28.851,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+17:08:28.866,machine,READY,READY,0
+17:08:28.954,task,PICK,工位就绪，从槽位 0 取料,0
+17:08:29.129,arm,feedback,视觉暂不可用，最多等待2秒获取新图像：传输后的视觉观测已过期：采集帧龄=1.034s,0
+17:08:29.218,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+17:08:29.245,arm,feedback,取料：槽位 0 -> 预抓取点,0
+17:08:29.253,arm,feedback,夹爪张开,0
+17:08:29.271,arm,feedback,规划中: 夹爪张开,0
+17:08:29.381,arm,feedback,规划完成: 夹爪张开,0
+17:08:29.492,arm,feedback,执行完成: 夹爪张开,0
+17:08:29.520,arm,feedback,规划中: 预抓取点(槽位0),0
+17:08:29.630,arm,feedback,"失败现场：panda_joint1=0.00650, panda_joint2=-0.77583, panda_joint3=0.00238, panda_joint4=-2.34804, panda_joint5=0.00987, panda_joint6=1.57526, panda_joint7=0.78169, panda_finger_joint1=0.03470, panda_finger_joint2=0.03470；附着=None；加工台工件=None",0
+17:08:29.652,arm,feedback,失败现场：当前状态有效=True；碰撞对=无,0
+17:08:29.653,arm,feedback,预抓取点(槽位0)：规划/执行失败 INVALID_MOTION_PLAN (-2)；ROS动作状态=6；最后反馈=IDLE；goal_id=b1c4b44b9b2c4e328ca7228bd7ff1dfa；/move_action/_action/status=/move_group[gid=010fb574ef4548d700000000000074030000000000000000]; /execute_trajectory/_action/status=/move_group[gid=010fb574ef4548d700000000000066030000000000000000]; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller[gid=010fb574f1452bd30000000000006a030000000000000000],0
+17:08:29.681,arm,feedback,预抓取点(槽位0)：规划结果无效，刷新状态后重新规划一次（尚未执行）,0
+17:08:29.790,arm,feedback,"失败现场：panda_joint1=0.00650, panda_joint2=-0.77583, panda_joint3=0.00238, panda_joint4=-2.34804, panda_joint5=0.00987, panda_joint6=1.57526, panda_joint7=0.78169, panda_finger_joint1=0.03470, panda_finger_joint2=0.03470；附着=None；加工台工件=None",0
+17:08:29.813,arm,feedback,失败现场：当前状态有效=True；碰撞对=无,0
+17:08:29.813,arm,feedback,预抓取点(槽位0)：规划/执行失败 INVALID_MOTION_PLAN (-2)；ROS动作状态=6；最后反馈=IDLE；goal_id=6ec56d6d2fd54fafbe168e0b5147e30d；/move_action/_action/status=/move_group[gid=010fb574ef4548d700000000000074030000000000000000]; /execute_trajectory/_action/status=/move_group[gid=010fb574ef4548d700000000000066030000000000000000]; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller[gid=010fb574f1452bd30000000000006a030000000000000000],0
+17:08:29.853,task,ABORTED,pick失败: 预抓取点(槽位0)：规划/执行失败 INVALID_MOTION_PLAN (-2)；ROS动作状态=6；最后反馈=IDLE；goal_id=6ec56d6d2fd54fafbe168e0b5147e30d；/move_action/_action/status=/move_group[gid=010fb574ef4548d700000000000074030000000000000000]; /execute_trajectory/_action/status=/move_group[gid=010fb574ef4548d700000000000066030000000000000000]; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller[gid=010fb574f1452bd30000000000006a030000000000000000],0

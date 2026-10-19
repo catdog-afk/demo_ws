@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: return失败: 放回预放置点(槽位0)：规划/执行失败 INVALID_MOTION_PLAN (-2)；ROS动作状态=6；最后反馈=IDLE；goal_id=d3b5db20426244058e25ac02f6202da1；/move_action/_action/status=/move_group[gid=010fb57471e5f54a00000000000074030000000000000000]; /execute_trajectory/_action/status=/move_group[gid=010fb57471e5f54a00000000000066030000000000000000]; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller[gid=010fb57473e5d79f00000000000050030000000000000000]
+本轮任务时长: 21.1 秒
+任务经过的状态: WAIT_STATION -> PICK -> PLACE -> WAIT_MACHINING -> RETRIEVE -> RETURN -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 114
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261019_165000_608136_9d0529ebdfdd42399b42d6466bea8979.csv

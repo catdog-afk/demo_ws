@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: INTERRUPTED
+槽位: 0
+说明: 节点关闭，任务未完成
+本轮任务时长: 5.1 秒
+任务经过的状态: WAIT_STATION -> PICK
+A2 阶段验收: 核心阶段不完整或顺序错误: WAIT_STATION -> PICK
+事件总数: 12
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261019_170708_165801_16ff1354e0074adfa85d6efedf30266d.csv

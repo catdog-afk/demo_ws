@@ -1,0 +1,69 @@
+time,source,event,detail,slot
+17:02:41.843,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+17:02:41.903,machine,BUSY,BUSY,0
+17:02:46.704,machine,READY,READY,0
+17:02:46.730,task,PICK,工位就绪，从槽位 0 取料,0
+17:02:46.855,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+17:02:46.878,arm,feedback,取料：槽位 0 -> 预抓取点,0
+17:02:46.879,arm,feedback,夹爪张开,0
+17:02:46.900,arm,feedback,规划中: 夹爪张开,0
+17:02:47.005,arm,feedback,规划完成: 夹爪张开,0
+17:02:47.109,arm,feedback,执行完成: 夹爪张开,0
+17:02:47.133,arm,feedback,规划中: 预抓取点(槽位0),0
+17:02:47.239,arm,feedback,规划完成: 预抓取点(槽位0),0
+17:02:50.105,arm,feedback,执行完成: 预抓取点(槽位0),0
+17:02:50.127,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+17:02:50.148,arm,feedback,直线规划中: 抓取点(槽位0),0
+17:02:50.876,arm,feedback,执行完成: 抓取点(槽位0),0
+17:02:50.900,arm,feedback,工件 workpiece_0 已附着到末端,0
+17:02:50.903,arm,feedback,夹爪闭合,0
+17:02:50.926,arm,feedback,规划中: 夹爪闭合,0
+17:02:51.029,arm,feedback,规划完成: 夹爪闭合,0
+17:02:51.133,arm,feedback,执行完成: 夹爪闭合,0
+17:02:51.154,arm,feedback,直线规划中: 提起工件,0
+17:02:51.883,arm,feedback,执行完成: 提起工件,0
+17:02:52.029,task,PLACE,取料完成，准备上料,0
+17:02:52.156,arm,feedback,规划中: 上料预放置点,0
+17:02:52.260,arm,feedback,规划完成: 上料预放置点,0
+17:02:56.027,arm,feedback,执行完成: 上料预放置点,0
+17:02:56.048,arm,feedback,直线规划中: 放置点,0
+17:02:56.878,arm,feedback,执行完成: 放置点,0
+17:02:56.879,arm,feedback,夹爪张开,0
+17:02:56.900,arm,feedback,规划中: 夹爪张开,0
+17:02:57.005,arm,feedback,规划完成: 夹爪张开,0
+17:02:57.109,arm,feedback,执行完成: 夹爪张开,0
+17:02:57.134,arm,feedback,工件已放入加工台，开始等待加工,0
+17:02:57.157,arm,feedback,直线规划中: 退出加工台,0
+17:02:57.934,arm,feedback,执行完成: 退出加工台,0
+17:02:58.004,machine,MACHINING,加工进度 0%,0
+17:02:58.030,task,WAIT_MACHINING,上料完成，等待工位加工结束信号,0
+17:02:58.303,machine,MACHINING,加工进度 1%,0
+17:02:58.703,machine,MACHINING,加工进度 2%,0
+17:02:59.003,machine,MACHINING,加工进度 3%,0
+17:02:59.304,machine,MACHINING,加工进度 4%,0
+17:02:59.503,machine,MACHINING,加工进度 5%,0
+17:02:59.803,machine,MACHINING,加工进度 6%,0
+17:03:00.203,machine,MACHINING,加工进度 7%,0
+17:03:00.403,machine,MACHINING,加工进度 8%,0
+17:03:00.703,machine,MACHINING,加工进度 9%,0
+17:03:01.003,machine,MACHINING,加工进度 10%,0
+17:03:01.303,machine,MACHINING,加工进度 11%,0
+17:03:01.703,machine,MACHINING,加工进度 12%,0
+17:03:01.903,machine,MACHINING,加工进度 13%,0
+17:03:02.030,task,TIMEOUT,加工超时警告：延长一次等待窗口,0
+17:03:02.203,machine,MACHINING,加工进度 14%,0
+17:03:02.603,machine,MACHINING,加工进度 15%,0
+17:03:02.903,machine,MACHINING,加工进度 16%,0
+17:03:03.130,task,WAIT_MACHINING,超时后继续等待一次；不重新启动加工,0
+17:03:03.202,machine,MACHINING,加工进度 17%,0
+17:03:03.403,machine,MACHINING,加工进度 18%,0
+17:03:03.703,machine,MACHINING,加工进度 19%,0
+17:03:04.003,machine,MACHINING,加工进度 20%,0
+17:03:04.303,machine,MACHINING,加工进度 21%,0
+17:03:04.603,machine,MACHINING,加工进度 22%,0
+17:03:05.003,machine,MACHINING,加工进度 23%,0
+17:03:05.203,machine,MACHINING,加工进度 24%,0
+17:03:05.503,machine,MACHINING,加工进度 25%,0
+17:03:05.804,machine,MACHINING,加工进度 26%,0
+17:03:06.103,machine,MACHINING,加工进度 27%,0
+17:03:06.130,task,ABORTED,加工超时，任务中止,0
