@@ -21,11 +21,14 @@ from demo_interfaces.srv import SetOccupancy
 
 from machining_demo import layout
 from machining_demo.scene_colors import object_color
+from machining_demo.vision_geometry import initial_centers
 
 
 class SceneManager(Node):
     def __init__(self):
         super().__init__('scene_manager')
+        self.declare_parameter('workpiece_offsets', '0.012,0.006,-0.009,-0.007,0.006,0.005')
+        self._initial_centers = initial_centers(self.get_parameter('workpiece_offsets').value)
         # 规划场景服务客户端（move_group 提供）
         self.scene_client = self.create_client(
             ApplyPlanningScene, '/apply_planning_scene')
@@ -117,7 +120,7 @@ class SceneManager(Node):
             scene.world.collision_objects.append(
                 self._box(layout.workpiece_name(slot),
                           (layout.WORKPIECE_SIZE,) * 3,
-                          layout.slot_xyz(slot)))
+                          getattr(self, '_initial_centers', [layout.slot_xyz(i) for i in range(3)])[slot]))
         scene.object_colors = [object_color(obj.id) for obj in scene.world.collision_objects]
         if self._apply(scene):
             self.get_logger().info('场景构建完成：桌面 + 料盘(3 个工件) + 加工台')

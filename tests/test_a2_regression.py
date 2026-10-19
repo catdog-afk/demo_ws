@@ -435,6 +435,9 @@ class GeometryTests(unittest.TestCase):
         node._attached_name = node._machine_workpiece = None
         commands = []
         node._status = lambda message: None
+        node._locate_workpieces = lambda **kwargs: [layout.slot_xyz(i) for i in range(3)]
+        node._sync_vision_scene = lambda centers: True
+        node._vision_stamp = None
         node._gripper = lambda open_: commands.append(('gripper', open_)) or True
         node._goto_pose = lambda pose, name: commands.append(('motion', name)) or False
         self.assertFalse(node._pick(0))

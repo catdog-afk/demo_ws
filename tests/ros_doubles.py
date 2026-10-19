@@ -143,6 +143,21 @@ class Pose:
         self.orientation = ns(x=0.0, y=0.0, z=0.0, w=0.0)
 
 
+class PoseStamped:
+    def __init__(self):
+        self.header = ns(frame_id='', stamp=ns(sec=0, nanosec=0))
+        self.pose = Pose()
+
+
+class Bridge:
+    def imgmsg_to_cv2(self, msg, desired_encoding='bgr8'):
+        return msg.image
+
+    def cv2_to_imgmsg(self, image, encoding='bgr8'):
+        return ns(image=image, encoding=encoding,
+                  header=ns(frame_id='', stamp=ns(sec=0, nanosec=0)))
+
+
 class Marker:
     TEXT_VIEW_FACING, ADD = 9, 0
 
@@ -178,6 +193,7 @@ class TrayOccupancy:
 class Request:
     def __init__(self):
         self.header = ns(frame_id='')
+        self.components = ns(components=0)
         self.scene = None
         self.command = ''
         self.slot = 0
@@ -247,21 +263,23 @@ def install():
         'rclpy.executors': dict(MultiThreadedExecutor=Mock),
         'visualization_msgs.msg': dict(Marker=Marker),
         'std_msgs.msg': dict(Bool=Data, String=Data),
-        'sensor_msgs.msg': dict(JointState=Data),
-        'geometry_msgs.msg': dict(Pose=Pose, TransformStamped=Data),
+        'sensor_msgs.msg': dict(JointState=Data, Image=Data, CameraInfo=Data),
+        'geometry_msgs.msg': dict(Pose=Pose, PoseStamped=PoseStamped, TransformStamped=Data),
+        'cv_bridge': dict(CvBridge=Bridge),
         'shape_msgs.msg': dict(SolidPrimitive=Primitive),
         'moveit_msgs.msg': dict(PlanningScene=PlanningScene, CollisionObject=CollisionObject,
                                AttachedCollisionObject=Data, ObjectColor=ObjectColor,
                                MoveItErrorCodes=MoveItErrorCodes, Constraints=Constraints),
         'moveit_msgs.action': dict(MoveGroup=Data, ExecuteTrajectory=ns(Goal=Data)),
         'moveit_msgs.srv': dict(ApplyPlanningScene=Service, GetCartesianPath=Service,
-                               GetStateValidity=Service),
+                               GetStateValidity=Service, GetPlanningScene=Service),
         'demo_interfaces.msg': dict(TaskState=TaskState, MachineStatus=MachineStatus,
                                    TrayOccupancy=TrayOccupancy),
         'demo_interfaces.srv': dict(StartTask=Service, CancelTask=Service, ArmCommand=Service,
-                                   SetOccupancy=Service, ResetMachine=Service),
+                                   SetOccupancy=Service, ResetMachine=Service, LocateWorkpieces=Service),
         'tf2_ros': dict(StaticTransformBroadcaster=Mock),
     }
+    definitions['moveit_msgs.msg']['PlanningSceneComponents'] = ns(WORLD_OBJECT_GEOMETRY=16)
     for name in ('MotionPlanRequest', 'PlanningOptions', 'PositionConstraint',
                  'OrientationConstraint', 'JointConstraint', 'BoundingVolume', 'RobotState'):
         definitions['moveit_msgs.msg'][name] = Data

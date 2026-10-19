@@ -45,10 +45,11 @@ from moveit_msgs.msg import (MotionPlanRequest, PlanningOptions, Constraints,
 from moveit_msgs.action import MoveGroup, ExecuteTrajectory
 from moveit_msgs.srv import ApplyPlanningScene, GetCartesianPath, GetStateValidity
 
-from demo_interfaces.srv import ArmCommand
+from demo_interfaces.srv import ArmCommand, LocateWorkpieces
 
 from machining_demo import layout
 from machining_demo.scene_colors import object_color
+from machining_demo.vision_geometry import validate_centers
 
 # 规划组关节
 ARM_JOINTS = ['panda_joint%d' % i for i in range(1, 8)]
@@ -103,6 +104,9 @@ class ArmController(Node):
         self._scene_client = self.create_client(
             ApplyPlanningScene, '/apply_planning_scene',
             callback_group=self._clients_group)
+        self._vision_client = self.create_client(
+            LocateWorkpieces, '/vision/locate_workpieces',
+            callback_group=self._clients_group)
         self.pub_status = self.create_publisher(String, '/arm/status', 10)
         self.pub_workpiece = self.create_publisher(
             Bool, '/machine/workpiece_present', 10)
@@ -121,6 +125,8 @@ class ArmController(Node):
         self._attached_name = None
         self._machine_workpiece = None
         self._last_error = ''
+        self._return_xyz = None
+        self._vision_stamp = None
 
         self.get_logger().info('机械臂控制节点就绪，服务 /arm/command 已创建')
 
@@ -550,6 +556,79 @@ class ArmController(Node):
                                   name)
 
     # ---------- 上下料动作 ----------
+    def _locate_workpieces(self, newer_than=None):
+        """只接受新鲜、同帧、完整的视觉观测，绝不回退到 slot_xyz。"""
+        refresh_deadline = time.monotonic() + 2.0
+        while rclpy.ok():
+            self._vision_pending = False
+            centers = self._read_vision(newer_than)
+            if centers is not None or not self._vision_pending:
+                return centers
+            if time.monotonic() >= refresh_deadline:
+                self._failure('靠近后相机图像未刷新，停止下降')
+                return None
+            time.sleep(0.05)
+        self._failure('节点退出，取消视觉定位')
+        return None
+
+    def _read_vision(self, newer_than):
+        if not self._vision_client.wait_for_service(timeout_sec=3.0):
+            self._failure('视觉定位服务不可用，不执行取料')
+            return None
+        future = self._vision_client.call_async(LocateWorkpieces.Request())
+        deadline = time.monotonic() + 5.0
+        while rclpy.ok() and not future.done() and time.monotonic() < deadline:
+            time.sleep(0.02)
+        if not future.done():
+            future.cancel()
+            self._failure('视觉定位超时，不执行取料')
+            return None
+        try:
+            result = future.result()
+            if not result.success:
+                raise ValueError(result.message)
+            if len(result.centers) != layout.NUM_SLOTS:
+                raise ValueError('观测工件数不完整')
+            stamps = [p.header.stamp.sec * 1000000000 + p.header.stamp.nanosec
+                      for p in result.centers]
+            age = (self.get_clock().now().nanoseconds - stamps[0]) / 1e9
+            if (any(p.header.frame_id != 'panda_link0' for p in result.centers) or
+                    len(set(stamps)) != 1 or not 0 <= age <= 1.0):
+                raise ValueError('视觉观测坐标系错误、过期或未刷新')
+            if newer_than is not None and stamps[0] <= newer_than:
+                self._vision_pending = True
+                return None
+            centers = [(p.pose.position.x, p.pose.position.y, p.pose.position.z)
+                       for p in result.centers]
+            validate_centers(centers)
+            self._vision_stamp = stamps[0]
+            self._status('视觉定位：' + '; '.join('%s=(%.4f,%.4f,%.4f)' %
+                         (layout.workpiece_name(i), *xyz) for i, xyz in enumerate(centers)))
+            return centers
+        except Exception as exc:
+            self._failure('视觉定位失败：%s' % exc)
+            return None
+
+    def _sync_vision_scene(self, centers):
+        """所有邻近工件一起更新，规划器避碰使用本次观测而非标称槽位。"""
+        scene = PlanningScene()
+        scene.is_diff = True
+        scene.robot_state.is_diff = True
+        for i, xyz in enumerate(centers):
+            co = CollisionObject()
+            co.id = layout.workpiece_name(i)
+            co.header.frame_id = 'panda_link0'
+            co.operation = CollisionObject.ADD
+            co.pose.orientation.w = 1.0
+            box = SolidPrimitive()
+            box.type, box.dimensions = SolidPrimitive.BOX, [layout.WORKPIECE_SIZE] * 3
+            co.primitives = [box]
+            pose = make_pose(*xyz, quat=(0.0, 0.0, 0.0, 1.0))
+            co.primitive_poses = [pose]
+            scene.world.collision_objects.append(co)
+            scene.object_colors.append(object_color(co.id))
+        return self._apply_scene(scene)
+
     def _pick(self, slot):
         if slot >= layout.NUM_SLOTS:
             self.get_logger().error('槽位 %d 超出范围' % slot)
@@ -557,7 +636,12 @@ class ArmController(Node):
         if self._attached_name is not None or self._machine_workpiece is not None:
             self._failure('已有工件在夹爪或加工台，不能重复取料')
             return False
-        x, y, z = layout.slot_xyz(slot)
+        centers = self._locate_workpieces()
+        if centers is None or not self._sync_vision_scene(centers):
+            return False
+        observed_at = self._vision_stamp
+        x, y, z = centers[slot]
+        self._return_xyz = (x, y, z)
         name = layout.workpiece_name(slot)
         approach = make_pose(x, y, z + layout.APPROACH_HEIGHT)
         grasp = make_pose(x, y, z + layout.GRASP_Z_OFFSET)
@@ -567,6 +651,12 @@ class ArmController(Node):
         if not self._gripper(open_=True):
             return False
         if not self._goto_pose(approach, '预抓取点(槽位%d)' % slot):
+            return False
+        confirmed = self._locate_workpieces(newer_than=observed_at)
+        if confirmed is None:
+            return False
+        if any(math.dist(a, b) > 0.003 for a, b in zip(centers, confirmed)):
+            self._failure('物料在靠近过程中移动超过3mm，停止下降，请重新定位')
             return False
         if not self._goto_linear(grasp, '抓取点(槽位%d)' % slot):
             return False
@@ -643,7 +733,10 @@ class ArmController(Node):
             self.get_logger().error('末端没有附着工件，无法执行 return')
             return False
         name = self._attached_name
-        x, y, z = layout.slot_xyz(slot)
+        if self._return_xyz is None:
+            self._failure('缺少本轮视觉抓取位置，拒绝按预设坐标放回')
+            return False
+        x, y, z = self._return_xyz
         approach = make_pose(x, y, z + layout.APPROACH_HEIGHT)
         grasp = make_pose(x, y, z + layout.GRASP_Z_OFFSET)
 
@@ -653,7 +746,7 @@ class ArmController(Node):
             return False
         if not self._gripper(open_=True):
             return False
-        if not self._detach_workpiece(name, layout.slot_xyz(slot)):
+        if not self._detach_workpiece(name, self._return_xyz):
             return False
         self._attached_name = None
         self._status('工件已放回料盘槽位 %d' % slot)

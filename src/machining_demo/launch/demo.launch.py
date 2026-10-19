@@ -6,8 +6,8 @@
        （joint_state_broadcaster / panda_arm_controller / panda_hand_controller）
     3. robot_state_publisher（机器人 TF）+ world 静态 TF
     4. rviz2（机器人模型 / 规划场景 / 轨迹 / 状态标注）
-    5. 五个功能节点：scene_manager / arm_controller / machine_simulator /
-       task_manager / result_recorder
+    5. 五个业务节点：scene_manager / arm_controller / machine_simulator /
+       task_manager / result_recorder，加 virtual_camera / vision_locator
 
 常用参数：
     auto_start:=true         是否自动开始演示（默认 true，5 秒后自动启动）
@@ -31,6 +31,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from moveit_configs_utils import MoveItConfigsBuilder
+from machining_demo.vision_geometry import CAMERA_X, CAMERA_Y, CAMERA_Z, FRAME
 
 
 def generate_launch_description():
@@ -104,6 +105,12 @@ def generate_launch_description():
         output='screen',
         parameters=[moveit_config.robot_description],
     )
+    camera_tf = Node(
+        package='tf2_ros', executable='static_transform_publisher',
+        name='overhead_camera_tf', output='log',
+        arguments=['--x', str(CAMERA_X), '--y', str(CAMERA_Y), '--z', str(CAMERA_Z),
+                   '--qx', '1', '--qy', '0', '--qz', '0', '--qw', '0',
+                   '--frame-id', 'panda_link0', '--child-frame-id', FRAME])
 
     # ---- RViz ----
     # 必须传入 robot_description / robot_description_semantic 参数：
@@ -131,7 +138,12 @@ def generate_launch_description():
 
     # ---- 功能节点 ----
     scene_manager = Node(
-        package='machining_demo', executable='scene_manager', output='screen')
+        package='machining_demo', executable='scene_manager', output='screen',
+        parameters=[{'workpiece_offsets': parameter('workpiece_offsets', str)}])
+    virtual_camera = Node(
+        package='machining_demo', executable='virtual_camera', output='screen')
+    vision_locator = Node(
+        package='machining_demo', executable='vision_locator', output='screen')
     machine_simulator = Node(
         package='machining_demo', executable='machine_simulator',
         output='screen',
@@ -164,6 +176,9 @@ def generate_launch_description():
                               description='是否自动开始演示'),
         DeclareLaunchArgument('slot', default_value='0',
                               description='取料槽位 0~2'),
+        DeclareLaunchArgument('workpiece_offsets',
+                              default_value='0.012,0.006,-0.009,-0.007,0.006,0.005',
+                              description='初始物料平移 dx0,dy0,dx1,dy1,dx2,dy2，单位米'),
         DeclareLaunchArgument('auto_start_delay', default_value='5.0',
                               description='自动启动延迟（秒）'),
         DeclareLaunchArgument('repeat_cycle', default_value='true',
@@ -195,8 +210,11 @@ def generate_launch_description():
         *controller_spawners,
         static_tf_node,
         robot_state_publisher,
+        camera_tf,
         rviz_node,
         scene_manager,
+        virtual_camera,
+        vision_locator,
         machine_simulator,
         arm_controller,
         task_manager,

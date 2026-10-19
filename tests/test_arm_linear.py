@@ -180,6 +180,7 @@ class ArmCycleTests(unittest.TestCase):
         Node.overrides = {}
         node = ArmController()
         motion = []
+        node._locate_workpieces = lambda **kwargs: [layout.slot_xyz(i) for i in range(3)]
         node._goto_pose = lambda pose, name: motion.append(('transfer', name)) or True
         node._goto_linear = lambda pose, name: motion.append(('linear', name)) or True
         node._gripper = lambda open_: True

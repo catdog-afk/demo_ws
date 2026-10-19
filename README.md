@@ -201,6 +201,25 @@ ros2 launch machining_demo demo.launch.py 2>&1 | tee ~/pick_failure.log
 ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -preset ultrafast demo_run.mp4
 ```
 
+## 仿真视觉扩展：偏移物料定位与抓取
+
+新增虚拟俯视相机和 OpenCV 颜色识别，取料坐标来自图像，不再直接使用名义槽位坐标。
+工件中心间距由 8cm 增至 14cm，料盘同步扩大。默认三件物料带有毫米级平移偏差，
+用于展示位置变化后的定位。识别失败、物料过近或抓取前位置变化时停止任务，无固定点位后备抓取。
+
+增加依赖后重新编译两个源码包，不要仅编译 Python 包：
+
+```bash
+sudo apt install python3-opencv python3-numpy ros-humble-cv-bridge
+colcon build --symlink-install
+source install/setup.bash
+bash restart_demo.sh repeat_cycle:=false
+```
+
+虚拟相机读取场景后投影成像，识别节点只接收图像。它只支持已知平面的彩色轴对齐方块，
+不包含真实相机标定、机器人遮挡或物理夹持验证。
+构建、改变物料位置、查看图像与测试边界见 [视觉抓取说明](docs/vision-grasp.md)。
+
 ## 二、系统结构与 ROS 通信关系
 
 ```
@@ -287,9 +306,9 @@ demo_ws/
 ├── README.md                  # 本文件（启动说明）
 ├── results/                   # 运行记录输出（task_log_*.csv + summary_*.txt）
 └── src/
-    ├── demo_interfaces/       # 自定义话题/服务接口（3 msg + 5 srv）
+    ├── demo_interfaces/       # 自定义话题/服务接口（3 msg + 6 srv）
     └── machining_demo/        # 主功能包
-        ├── machining_demo/    # 5 个功能节点 + 共享布局/验收规则 + 集成测试脚本
+        ├── machining_demo/    # 7 个功能节点 + 共享布局/验收规则 + 集成测试脚本
         ├── launch/demo.launch.py
         └── rviz/machining_demo.rviz
 ```

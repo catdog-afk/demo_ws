@@ -1,0 +1,5 @@
+# 从最新俯视图像定位三种颜色的工件，返回顺序为槽位身份 0/1/2。
+---
+bool success
+string message
+geometry_msgs/PoseStamped[] centers

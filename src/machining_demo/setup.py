@@ -31,6 +31,8 @@ setup(
             'task_manager = machining_demo.task_manager:main',
             'result_recorder = machining_demo.result_recorder:main',
             'demo_test = machining_demo.demo_test:main',
+            'virtual_camera = machining_demo.virtual_camera:main',
+            'vision_locator = machining_demo.vision_locator:main',
         ],
     },
 )
