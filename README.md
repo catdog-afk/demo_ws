@@ -65,13 +65,24 @@ RViz 只接收场景，不加载 move_group 的场景发布参数，避免重复
 
 > ⚠️ **一次只能运行一个演示实例**。重复启动会导致控制器重复加载、
 > `/move_action` 动作名冲突，机械臂报"取料失败"。
-> 推荐从第一次启动就使用当前仓库的 `bash restart_demo.sh`。脚本只清理自己管理的演示进程组，
-> 再启动当前仓库的构建结果；可附加 launch 参数，如 `bash restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0`。
+> 推荐使用当前仓库的 `bash restart_demo.sh`。脚本核验并清理本工作区的旧独立仿真会话，
+> 再启动当前仓库的构建结果；启动器先退出时仍检查存活子节点。
+> 可附加 launch 参数，如 `bash restart_demo.sh machining_sec:=15.0 machining_timeout:=8.0`。
 > 手动 `ros2 launch` 启动的旧实例，需要先在原终端按 Ctrl+C 退出。
 > 按一次 Ctrl+C 后等待进程退出日志结束并回到命令提示符，再启动下一次。
-> 脚本使用 `--noninteractive`，让独立会话中的 launch 主动向子节点传递退出信号。
-> 另外注意：电脑休眠唤醒后 ROS 进程会失去 DDS 发现能力（服务调用卡在
-> "waiting for service"），此时同样用 restart_demo.sh 重启即可。
+> 脚本使用 `--noninteractive`，退出时按实例标签核验全部子节点；未退出时依次升级退出信号。
+> 若无法确认进程归属或清理未完成，脚本拒绝再启动一套。
+
+只关闭演示，在另一个终端执行（无需先编译或加载 ROS 环境）：
+
+```bash
+cd ~/demo_ws
+bash stop_demo.sh
+```
+
+清理会核对工程路径、独立会话、节点角色及进程启动身份，不按公共节点名批量结束进程。
+也支持核验旧版重启脚本留下、且仍有本工程节点路径证据的独立会话。
+清理期间请等待终端提示结束；Ctrl+C 后最多会经历约 14 秒的分阶段等待。
 
 关闭后怀疑进程残留时，可先查看操作系统进程（此命令只查看，不结束进程）：
 
@@ -82,7 +93,9 @@ ps -eo pid,ppid,stat,args | grep -E '[m]achining_demo|[m]ove_group|[r]os2_contro
 输出可能包含其他 ROS 工程使用的公共节点，应结合命令路径和父进程确认归属。
 `ros2 node list` 的显示也可能受 DDS 发现和 CLI 缓存影响，不能单独作为残留进程的证明。
 确认进程属于已停止的本演示后，可以对具体 PID 发 `kill -INT PID`；若启动器还在，优先对其 PID 发信号。
-脚本只能管理由它启动的实例；首次改用脚本前，仍需退出此前手动启动的仿真。
+首次改用脚本前，仍需退出此前直接用 `ros2 launch` 启动的仿真。
+本机清理不能关闭其他主机的节点；如果仍报告重复动作服务，检查同一 ROS 域内的其他演示，
+或在该演示的所有终端使用独立的 `ROS_DOMAIN_ID`。具体步骤见 [重复实例排查](docs/duplicate-instance-debug.md)。
 
 ### 常用参数
 
@@ -140,6 +153,8 @@ python -m unittest discover -s tests -v
 
 测试执行真实节点回调，替换 ROS 消息、时钟与服务传输，覆盖状态机、超时、取消、
 工件坐标与逐轮记录。该测试不验证 DDS 通信、碰撞检测或实际 MoveIt 轨迹。
+Linux 下还会用临时工作区启动真实测试进程，验证正常节点和启动器退出后的孤儿节点清理；
+Windows 跳过这两项 Linux 进程测试。
 
 ROS 集成验收需要两个终端；第一个终端禁止自动启动，第二个终端发起本次任务：
 
@@ -193,7 +208,8 @@ ros2 launch machining_demo demo.launch.py 2>&1 | tee ~/pick_failure.log
 连续观察至少 5 轮 `DONE`，再用 `slot:=1`、`slot:=2` 分别启动检查另外两个槽位。
 若仍出现 `ABORTED`，保留本次 `summary_*.txt`、`task_log_*.csv` 以及 `~/pick_failure.log`。
 这些修改通过离线控制逻辑测试，真实 IK、碰撞和连续运动效果仍需在 ROS2 仿真环境复测。
-重启脚本使用 SIGINT 请求 launch 退出，并等待旧实例结束；若未能退出则保留进程标识、拒绝启动新实例。
+重启脚本检查完整的本工程独立会话，依次请求中断、终止和强制退出；
+若未能确认旧节点全部退出，则保留实例信息并拒绝启动新实例。
 
 ### 录制演示视频
 
@@ -202,6 +218,9 @@ ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -pres
 ```
 
 ## 仿真视觉扩展：偏移物料定位与抓取
+
+15:14 的最新 CSV 已成功识别三个工件，随后因发现重复动作服务而中止。
+相关证据、进程残留修复与更新步骤见 [重复实例排查](docs/duplicate-instance-debug.md)。
 
 14:56 的缺帧/过期日志及输入恢复修改见 [图像过期分析](docs/vision-frame-debug.md)。
 本次定位服务增加 `retryable` 字段，必须退出旧节点，重新编译接口包及 Python 包后启动。

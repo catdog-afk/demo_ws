@@ -26,6 +26,7 @@
 import time
 import threading
 import math
+import os
 
 import rclpy
 from rclpy.node import Node
@@ -336,12 +337,15 @@ class ArmController(Node):
         duplicate = False
         for topic in topics:
             endpoints = self.get_publishers_info_by_topic(topic)
-            names = [item.node_namespace.rstrip('/') + '/' + item.node_name for item in endpoints]
+            names = [item.node_namespace.rstrip('/') + '/' + item.node_name +
+                     '[gid=%s]' % bytes(getattr(item, 'endpoint_gid', [])).hex() for item in endpoints]
             owners.append('%s=%s' % (topic, ','.join(names) or '尚未发现'))
             duplicate = duplicate or len(endpoints) > 1
         self._execution_owners = '; '.join(owners)
         if duplicate:
-            self._failure('%s：发现重复动作服务，停止发送运动目标；%s' % (name, '; '.join(owners)))
+            self._failure('%s：发现重复动作服务，停止发送运动目标；%s；ROS_DOMAIN_ID=%s；'
+                          '先运行 bash stop_demo.sh 清理本机本工程；仍重复时检查同域其他主机或换独立ROS域' %
+                          (name, '; '.join(owners), os.environ.get('ROS_DOMAIN_ID', '0')))
             return False
         return True
 

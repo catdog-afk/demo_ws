@@ -18,3 +18,5 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .demo.pid
+.demo.instance
+.demo.lock
