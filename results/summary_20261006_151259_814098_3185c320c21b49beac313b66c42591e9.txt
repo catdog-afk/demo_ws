@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: home失败: 回零位(ready)：规划/执行失败 INVALID_MOTION_PLAN (-2)
+本轮任务时长: 34.5 秒
+任务经过的状态: WAIT_STATION -> PICK -> PLACE -> WAIT_MACHINING -> RETRIEVE -> RETURN -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 110
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261006_151259_814098_3185c320c21b49beac313b66c42591e9.csv

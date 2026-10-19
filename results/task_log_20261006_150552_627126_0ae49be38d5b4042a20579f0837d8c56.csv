@@ -1,0 +1,110 @@
+time,source,event,detail,slot
+15:05:52.627,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+15:05:52.700,machine,BUSY,BUSY,0
+15:05:57.601,machine,READY,READY,0
+15:05:57.614,task,PICK,工位就绪，从槽位 0 取料,0
+15:05:57.716,arm,feedback,取料：槽位 0 -> 预抓取点,0
+15:05:57.716,arm,feedback,夹爪张开,0
+15:05:57.738,arm,feedback,规划中: 夹爪张开,0
+15:05:57.893,arm,feedback,执行完成: 夹爪张开,0
+15:05:57.915,arm,feedback,规划中: 预抓取点(槽位0),0
+15:06:01.687,arm,feedback,执行完成: 预抓取点(槽位0),0
+15:06:01.710,arm,feedback,直线规划中: 抓取点(槽位0),0
+15:06:02.437,arm,feedback,执行完成: 抓取点(槽位0),0
+15:06:02.463,arm,feedback,工件 workpiece_0 已附着到末端,0
+15:06:02.464,arm,feedback,夹爪闭合,0
+15:06:02.485,arm,feedback,规划中: 夹爪闭合,0
+15:06:02.643,arm,feedback,执行完成: 夹爪闭合,0
+15:06:02.664,arm,feedback,直线规划中: 提起工件,0
+15:06:03.393,arm,feedback,执行完成: 提起工件,0
+15:06:03.513,task,PLACE,取料完成，准备上料,0
+15:06:03.639,arm,feedback,规划中: 上料预放置点,0
+15:06:06.957,arm,feedback,执行完成: 上料预放置点,0
+15:06:06.979,arm,feedback,直线规划中: 放置点,0
+15:06:07.706,arm,feedback,执行完成: 放置点,0
+15:06:07.707,arm,feedback,夹爪张开,0
+15:06:07.729,arm,feedback,规划中: 夹爪张开,0
+15:06:07.888,arm,feedback,执行完成: 夹爪张开,0
+15:06:07.915,arm,feedback,工件已放入加工台，开始等待加工,0
+15:06:07.937,arm,feedback,直线规划中: 退出加工台,0
+15:06:08.664,arm,feedback,执行完成: 退出加工台,0
+15:06:08.702,machine,MACHINING,加工进度 0%,0
+15:06:08.713,task,WAIT_MACHINING,上料完成，等待工位加工结束信号,0
+15:06:08.800,machine,MACHINING,加工进度 1%,0
+15:06:08.900,machine,MACHINING,加工进度 3%,0
+15:06:09.000,machine,MACHINING,加工进度 5%,0
+15:06:09.100,machine,MACHINING,加工进度 7%,0
+15:06:09.200,machine,MACHINING,加工进度 9%,0
+15:06:09.300,machine,MACHINING,加工进度 11%,0
+15:06:09.400,machine,MACHINING,加工进度 13%,0
+15:06:09.500,machine,MACHINING,加工进度 15%,0
+15:06:09.600,machine,MACHINING,加工进度 17%,0
+15:06:09.700,machine,MACHINING,加工进度 20%,0
+15:06:09.800,machine,MACHINING,加工进度 21%,0
+15:06:09.900,machine,MACHINING,加工进度 23%,0
+15:06:10.000,machine,MACHINING,加工进度 25%,0
+15:06:10.100,machine,MACHINING,加工进度 27%,0
+15:06:10.200,machine,MACHINING,加工进度 29%,0
+15:06:10.300,machine,MACHINING,加工进度 31%,0
+15:06:10.400,machine,MACHINING,加工进度 33%,0
+15:06:10.500,machine,MACHINING,加工进度 35%,0
+15:06:10.600,machine,MACHINING,加工进度 38%,0
+15:06:10.700,machine,MACHINING,加工进度 40%,0
+15:06:10.799,machine,MACHINING,加工进度 41%,0
+15:06:10.900,machine,MACHINING,加工进度 43%,0
+15:06:11.000,machine,MACHINING,加工进度 45%,0
+15:06:11.100,machine,MACHINING,加工进度 47%,0
+15:06:11.200,machine,MACHINING,加工进度 49%,0
+15:06:11.300,machine,MACHINING,加工进度 51%,0
+15:06:11.400,machine,MACHINING,加工进度 53%,0
+15:06:11.500,machine,MACHINING,加工进度 55%,0
+15:06:11.600,machine,MACHINING,加工进度 57%,0
+15:06:11.700,machine,MACHINING,加工进度 59%,0
+15:06:11.800,machine,MACHINING,加工进度 61%,0
+15:06:11.900,machine,MACHINING,加工进度 63%,0
+15:06:12.000,machine,MACHINING,加工进度 65%,0
+15:06:12.100,machine,MACHINING,加工进度 67%,0
+15:06:12.200,machine,MACHINING,加工进度 69%,0
+15:06:12.300,machine,MACHINING,加工进度 71%,0
+15:06:12.400,machine,MACHINING,加工进度 73%,0
+15:06:12.500,machine,MACHINING,加工进度 75%,0
+15:06:12.600,machine,MACHINING,加工进度 77%,0
+15:06:12.700,machine,MACHINING,加工进度 79%,0
+15:06:12.800,machine,MACHINING,加工进度 82%,0
+15:06:12.900,machine,MACHINING,加工进度 84%,0
+15:06:12.999,machine,MACHINING,加工进度 85%,0
+15:06:13.099,machine,MACHINING,加工进度 87%,0
+15:06:13.200,machine,MACHINING,加工进度 89%,0
+15:06:13.300,machine,MACHINING,加工进度 91%,0
+15:06:13.400,machine,MACHINING,加工进度 93%,0
+15:06:13.500,machine,MACHINING,加工进度 95%,0
+15:06:13.600,machine,MACHINING,加工进度 97%,0
+15:06:13.700,machine,MACHINING,加工进度 99%,0
+15:06:13.801,machine,DONE,DONE,0
+15:06:13.813,task,RETRIEVE,加工完成，取回工件,0
+15:06:13.938,arm,feedback,规划中: 取回预抓取点,0
+15:06:14.395,arm,feedback,执行完成: 取回预抓取点,0
+15:06:14.416,arm,feedback,直线规划中: 取回抓取点,0
+15:06:15.143,arm,feedback,执行完成: 取回抓取点,0
+15:06:15.166,arm,feedback,工件已从加工台取回并附着,0
+15:06:15.167,arm,feedback,夹爪闭合,0
+15:06:15.189,arm,feedback,规划中: 夹爪闭合,0
+15:06:15.342,arm,feedback,执行完成: 夹爪闭合,0
+15:06:15.364,arm,feedback,直线规划中: 取回提起,0
+15:06:16.089,arm,feedback,执行完成: 取回提起,0
+15:06:16.101,machine,READY,READY,0
+15:06:16.113,task,RETURN,取回完成，放回原料盘槽位,0
+15:06:16.237,arm,feedback,规划中: 放回预放置点(槽位0),0
+15:06:19.159,arm,feedback,执行完成: 放回预放置点(槽位0),0
+15:06:19.184,arm,feedback,直线规划中: 放回点(槽位0),0
+15:06:19.860,arm,feedback,执行完成: 放回点(槽位0),0
+15:06:19.863,arm,feedback,夹爪张开,0
+15:06:19.886,arm,feedback,规划中: 夹爪张开,0
+15:06:20.045,arm,feedback,执行完成: 夹爪张开,0
+15:06:20.068,arm,feedback,工件已放回料盘槽位 0,0
+15:06:20.091,arm,feedback,直线规划中: 退出料盘,0
+15:06:20.818,arm,feedback,执行完成: 退出料盘,0
+15:06:21.014,task,RETURN,工件已放回，确认料盘占用后回零,0
+15:06:21.137,arm,feedback,规划中: 回零位(ready),0
+15:06:24.763,arm,feedback,执行完成: 回零位(ready),0
+15:06:24.814,task,DONE,第 1 轮完成：工件已放回，机械臂回零成功，上下料循环完成；3.0 秒后自动开始下一轮,0

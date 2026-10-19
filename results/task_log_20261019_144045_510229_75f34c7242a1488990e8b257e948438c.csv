@@ -1,0 +1,18 @@
+time,source,event,detail,slot
+14:40:45.510,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+14:40:45.581,machine,BUSY,BUSY,0
+14:40:50.482,machine,READY,READY,0
+14:40:50.495,task,PICK,工位就绪，从槽位 0 取料,0
+14:40:50.624,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+14:40:50.648,arm,feedback,取料：槽位 0 -> 预抓取点,0
+14:40:50.651,arm,feedback,夹爪张开,0
+14:40:50.673,arm,feedback,规划中: 夹爪张开,0
+14:40:50.836,arm,feedback,执行完成: 夹爪张开,0
+14:40:50.860,arm,feedback,规划中: 预抓取点(槽位0),0
+14:40:54.632,arm,feedback,执行完成: 预抓取点(槽位0),0
+14:40:54.654,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+14:40:54.676,arm,feedback,直线规划中: 抓取点(槽位0),0
+14:40:55.303,arm,feedback,"失败现场：panda_joint1=2.50859, panda_joint2=-0.50608, panda_joint3=-2.36861, panda_joint4=-2.40777, panda_joint5=-0.80108, panda_joint6=2.65084, panda_joint7=1.59721, panda_finger_joint1=0.03453, panda_finger_joint2=0.03453；附着=None；加工台工件=None",0
+14:40:55.327,arm,feedback,失败现场：当前状态有效=True；碰撞对=无,0
+14:40:55.331,arm,feedback,抓取点(槽位0)：规划/执行失败 PREEMPTED (-7),0
+14:40:55.394,task,ABORTED,pick失败: 抓取点(槽位0)：规划/执行失败 PREEMPTED (-7),0
