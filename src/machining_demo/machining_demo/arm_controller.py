@@ -275,7 +275,7 @@ class ArmController(Node):
         return c
 
     def _plan_execute(self, group, goal_constraints, name):
-        """向 move_group 发送规划+执行请求（阻塞至完成）。"""
+        """MoveGroup 仅规划，完整轨迹统一交给 ExecuteTrajectory 执行。"""
         if not rclpy.ok():
             self._failure('%s：节点正在退出，不再发送运动目标' % name)
             return False
@@ -303,23 +303,68 @@ class ArmController(Node):
 
         goal = MoveGroup.Goal()
         goal.request = req
-        goal.planning_options = PlanningOptions(replan=True)
-
-        return self._execute_action(self._action_client, goal, name)
+        # 所有轨迹由同一个 ExecuteTrajectory 入口执行，MoveGroup 只规划。
+        goal.planning_options = PlanningOptions(plan_only=True, replan=False)
+        for attempt in range(2):
+            if attempt:
+                req.start_state = self._motion_start_state(name)
+                if req.start_state is None:
+                    return False
+                self._status('%s：规划结果无效，刷新状态后重新规划一次（尚未执行）' % name)
+            planned = self._run_action(self._action_client, goal, name, '规划完成')
+            if planned is not None:
+                trajectory = planned.planned_trajectory
+                if not trajectory.joint_trajectory.points:
+                    self._failure('%s：规划返回空轨迹，不执行' % name)
+                    return False
+                execute = ExecuteTrajectory.Goal()
+                execute.trajectory = trajectory
+                return self._execute_action(self._execute_client, execute, name)
+            if self._last_action_error_code not in (-1, -2):
+                break
+        return False
 
     def _execute_action(self, client, goal, name):
         """统一检查 MoveGroup / ExecuteTrajectory 的接受、超时和执行结果。"""
+        return self._run_action(client, goal, name) is not None
+
+    def _execution_graph(self, name):
+        """同名执行服务有多个发布端时拒绝运动，并记录所属节点。"""
+        topics = ('/move_action/_action/status', '/execute_trajectory/_action/status',
+                  '/panda_arm_controller/follow_joint_trajectory/_action/status')
+        owners = []
+        duplicate = False
+        for topic in topics:
+            endpoints = self.get_publishers_info_by_topic(topic)
+            names = [item.node_namespace.rstrip('/') + '/' + item.node_name for item in endpoints]
+            owners.append('%s=%s' % (topic, ','.join(names) or '尚未发现'))
+            duplicate = duplicate or len(endpoints) > 1
+        self._execution_owners = '; '.join(owners)
+        if duplicate:
+            self._failure('%s：发现重复动作服务，停止发送运动目标；%s' % (name, '; '.join(owners)))
+            return False
+        return True
+
+    def _run_action(self, client, goal, name, completion='执行完成'):
+        self._last_action_error_code = None
         if not rclpy.ok():
             self._failure('%s：节点正在退出，不再发送运动目标' % name)
-            return False
-        future = client.send_goal_async(goal)
+            return None
+        if not self._execution_graph(name):
+            return None
+        feedback = ['未收到']
+        def on_feedback(message):
+            feedback[0] = getattr(message.feedback, 'state', '未知')
+        future = client.send_goal_async(goal, feedback_callback=on_feedback)
         deadline = time.monotonic() + 10.0
         while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.05)
         if not future.done() or not future.result().accepted:
             self._failure('%s：运动目标未接受或响应超时' % name)
-            return False
+            return None
         goal_handle = future.result()
+        goal_id = getattr(goal_handle, 'goal_id', None)
+        goal_uuid = bytes(goal_id.uuid).hex() if goal_id is not None else '未知'
 
         result_future = goal_handle.get_result_async()
         deadline = time.monotonic() + 90.0
@@ -329,15 +374,23 @@ class ArmController(Node):
             self._failure('%s：动作超时或节点正在退出' % name)
             if rclpy.ok():
                 goal_handle.cancel_goal_async()
-            return False
-        result = result_future.result().result
-        if result.error_code.val == MOVEIT_ERROR_SUCCESS:
-            self._status('执行完成: %s' % name)
-            return True
+            return None
+        envelope = result_future.result()
+        result = envelope.result
+        status = getattr(envelope, 'status', None)
+        if result.error_code.val == MOVEIT_ERROR_SUCCESS and status == 4:
+            self._status('%s: %s' % (completion, name))
+            return result
         code = result.error_code.val
+        self._last_action_error_code = code
         self._diagnose_state()
-        self._failure('%s：规划/执行失败 %s' % (name, self._error_code(code)))
-        return False
+        detail = '%s：规划/执行失败 %s；ROS动作状态=%s；最后反馈=%s' % (
+            name, self._error_code(code), status, feedback[0])
+        detail += '；goal_id=%s；%s' % (goal_uuid, self._execution_owners)
+        if code == -7:
+            detail += '；执行被中止，未自动重试，请检查其他控制客户端、残留节点及终端日志'
+        self._failure(detail)
+        return None
 
     @staticmethod
     def _error_code(code):

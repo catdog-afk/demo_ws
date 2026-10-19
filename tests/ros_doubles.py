@@ -136,6 +136,9 @@ class Node:
     def destroy_node(self):
         return True
 
+    def get_publishers_info_by_topic(self, topic):
+        return []
+
 
 class Pose:
     def __init__(self):
@@ -252,6 +255,13 @@ class Constraints:
         self.orientation_constraints = []
 
 
+class MotionPlanRequest(Data):
+    def __init__(self):
+        super().__init__()
+        self.workspace_parameters = ns(header=ns(frame_id=''),
+                                       min_corner=ns(), max_corner=ns())
+
+
 def install():
     definitions = {
         'rclpy': dict(ok=lambda: True, spin_until_future_complete=Mock(), spin_once=Mock()),
@@ -270,7 +280,7 @@ def install():
         'moveit_msgs.msg': dict(PlanningScene=PlanningScene, CollisionObject=CollisionObject,
                                AttachedCollisionObject=Data, ObjectColor=ObjectColor,
                                MoveItErrorCodes=MoveItErrorCodes, Constraints=Constraints),
-        'moveit_msgs.action': dict(MoveGroup=Data, ExecuteTrajectory=ns(Goal=Data)),
+        'moveit_msgs.action': dict(MoveGroup=ns(Goal=Data), ExecuteTrajectory=ns(Goal=Data)),
         'moveit_msgs.srv': dict(ApplyPlanningScene=Service, GetCartesianPath=Service,
                                GetStateValidity=Service, GetPlanningScene=Service),
         'demo_interfaces.msg': dict(TaskState=TaskState, MachineStatus=MachineStatus,
@@ -283,6 +293,7 @@ def install():
     for name in ('MotionPlanRequest', 'PlanningOptions', 'PositionConstraint',
                  'OrientationConstraint', 'JointConstraint', 'BoundingVolume', 'RobotState'):
         definitions['moveit_msgs.msg'][name] = Data
+    definitions['moveit_msgs.msg']['MotionPlanRequest'] = MotionPlanRequest
     for name, values in definitions.items():
         for index in range(1, len(name.split('.')) + 1):
             key = '.'.join(name.split('.')[:index])

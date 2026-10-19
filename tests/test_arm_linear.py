@@ -31,7 +31,7 @@ class LinearMotionTests(unittest.TestCase):
         self.node._cartesian_client.call_async = Mock(return_value=completed(
             ns(error_code=ns(val=1), fraction=1.0, solution=self.trajectory)))
         self.goal_handle = ns(accepted=True, get_result_async=lambda: completed(
-            ns(result=ns(error_code=ns(val=1)))))
+            ns(status=4, result=ns(error_code=ns(val=1)))))
         self.node._execute_client.send_goal_async.return_value = completed(self.goal_handle)
 
     def test_full_collision_checked_path_is_sent_to_execution(self):
@@ -173,6 +173,75 @@ class JointFeedbackTests(unittest.TestCase):
         # 即使两个手指都位于允许的最小开度，仍能包住 40mm 工件。
         self.assertGreater(sum(c.position - c.tolerance_below for c in goal.joint_constraints),
                            layout.WORKPIECE_SIZE)
+
+
+class PlanningExecutionTests(unittest.TestCase):
+    setUp = LinearMotionTests.setUp
+
+    def planner(self, codes):
+        self.node._action_client = Mock()
+        self.node._action_client.send_goal_async.side_effect = [completed(ns(
+            accepted=True, get_result_async=lambda code=code: completed(ns(
+                status=4 if code == 1 else 6,
+                result=ns(error_code=ns(val=code), planned_trajectory=self.trajectory)))))
+            for code in codes]
+
+    def test_move_group_only_plans_and_same_executor_runs_the_result(self):
+        self.planner([1])
+        self.assertTrue(self.node._plan_execute('panda_arm', ns(), '回零'))
+        goal = self.node._action_client.send_goal_async.call_args.args[0]
+        self.assertTrue(goal.planning_options.plan_only)
+        self.assertFalse(goal.planning_options.replan)
+        execute = self.node._execute_client.send_goal_async.call_args.args[0]
+        self.assertIs(execute.trajectory, self.trajectory)
+
+    def test_invalid_plan_is_recomputed_once_before_any_execution(self):
+        self.planner([-2,1])
+        self.assertTrue(self.node._plan_execute('panda_arm', ns(), '回零'))
+        self.assertEqual(self.node._motion_start_state.call_count,2)
+        self.assertEqual(self.node._action_client.send_goal_async.call_count,2)
+        self.node._execute_client.send_goal_async.assert_called_once()
+
+    def test_repeated_invalid_plan_never_reaches_executor(self):
+        self.planner([-2,-2])
+        self.assertFalse(self.node._plan_execute('panda_arm', ns(), '回零'))
+        self.node._execute_client.send_goal_async.assert_not_called()
+
+    def test_preempted_execution_is_not_automatically_replanned_or_reexecuted(self):
+        self.planner([1])
+        self.goal_handle.get_result_async = lambda: completed(ns(status=6,
+            result=ns(error_code=ns(val=-7))))
+        self.assertFalse(self.node._plan_execute('panda_arm', ns(), '回零'))
+        self.node._action_client.send_goal_async.assert_called_once()
+        self.node._execute_client.send_goal_async.assert_called_once()
+        self.assertIn('未自动重试',self.node._last_error)
+        self.assertIn('ROS动作状态=6',self.node._last_error)
+
+    def test_contradictory_action_terminal_state_is_not_success(self):
+        self.goal_handle.get_result_async = lambda: completed(ns(status=6,
+            result=ns(error_code=ns(val=1))))
+        self.assertFalse(self.node._execute_action(self.node._execute_client, ns(), '下降'))
+
+    def test_duplicate_action_endpoints_block_motion_and_record_owners(self):
+        self.node.get_publishers_info_by_topic = lambda topic: [
+            ns(node_name='move_group',node_namespace='/'),
+            ns(node_name='old_move_group',node_namespace='/')]
+        self.assertFalse(self.node._execute_action(self.node._execute_client, ns(), '下降'))
+        self.node._execute_client.send_goal_async.assert_not_called()
+        self.assertIn('重复动作服务',self.node._last_error)
+        self.assertIn('old_move_group',self.node._last_error)
+
+    def test_feedback_and_goal_id_are_saved_for_preempted_goal(self):
+        self.goal_handle.goal_id = ns(uuid=[1]*16)
+        self.goal_handle.get_result_async = lambda: completed(ns(status=6,
+            result=ns(error_code=ns(val=-7))))
+        def send(goal,feedback_callback):
+            feedback_callback(ns(feedback=ns(state='MONITOR')))
+            return completed(self.goal_handle)
+        self.node._execute_client.send_goal_async.side_effect = send
+        self.assertFalse(self.node._execute_action(self.node._execute_client, ns(), '下降'))
+        self.assertIn('最后反馈=MONITOR',self.node._last_error)
+        self.assertIn('goal_id='+'01'*16,self.node._last_error)
 
 
 class ArmCycleTests(unittest.TestCase):

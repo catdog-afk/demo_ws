@@ -41,8 +41,11 @@ source "$workspace_dir/install/setup.bash"
 set -u
 cd -- "$workspace_dir"
 echo '>> 启动 A2 演示（Ctrl+C 可退出）...'
+mkdir -p -- "$workspace_dir/results"
+terminal_log="$workspace_dir/results/launch_$(date +%Y%m%d_%H%M%S)_$$.txt"
+echo ">> 完整终端输出保存到：$terminal_log"
 # 独立会话里的子节点不会收到脚本终端的 Ctrl+C；让 launch 主动转发 SIGINT。
-setsid ros2 launch --noninteractive machining_demo demo.launch.py "$@" &
+setsid ros2 launch --noninteractive machining_demo demo.launch.py "$@" > >(tee "$terminal_log") 2>&1 &
 demo_pid=$!
 printf '%s\n' "$demo_pid" > "$pid_file"
 
