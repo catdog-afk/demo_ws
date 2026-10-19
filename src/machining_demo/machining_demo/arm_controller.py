@@ -779,7 +779,10 @@ class ArmController(Node):
         approach = make_pose(x, y, z + layout.APPROACH_HEIGHT)
         grasp = make_pose(x, y, z + layout.GRASP_Z_OFFSET)
 
-        if not self._goto_pose(approach, '取回预抓取点'):
+        # place结束时已沿直线退到同一个approach；加工等待期间没有臂运动。
+        # 重新做全局姿态规划可能选到另一组IK解，绕行时手指扫过台上工件。
+        # 用当前分支做局部直线对齐，仍要求完整路径、避碰及关节步长检查。
+        if not self._goto_linear(approach, '取回预抓取点'):
             return False
         if not self._goto_linear(grasp, '取回抓取点'):
             return False

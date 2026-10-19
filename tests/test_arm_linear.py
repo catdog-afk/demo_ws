@@ -268,7 +268,103 @@ class ArmCycleTests(unittest.TestCase):
             self.assertTrue(node._home())
         self.assertEqual([name for kind, name in motion if kind == 'linear'],
                          ['抓取点(槽位0)', '提起工件', '放置点', '退出加工台',
-                          '取回抓取点', '取回提起', '放回点(槽位0)', '退出料盘'] * 2)
+                          '取回预抓取点', '取回抓取点', '取回提起',
+                          '放回点(槽位0)', '退出料盘'] * 2)
+
+
+class RetrieveSafetyTests(unittest.TestCase):
+    """Keep the already reached machine approach branch and stop at unsafe moves."""
+    def setUp(self):
+        LinearMotionTests.setUp(self)
+        self.node._machine_workpiece = 'workpiece_0'
+        self.node._goto_pose = Mock(side_effect=AssertionError(
+            'Retrieve must not ask OMPL for another IK solution at the same pose'))
+        self.node._attach_workpiece = Mock(return_value=True)
+        self.node._gripper = Mock(return_value=True)
+
+    def cartesian_result(self, fraction=1.0):
+        return completed(ns(error_code=ns(val=1), fraction=fraction,
+                            solution=self.trajectory))
+
+    def assert_still_on_machine(self):
+        self.assertIsNone(self.node._attached_name)
+        self.assertEqual(self.node._machine_workpiece, 'workpiece_0')
+        self.node._attach_workpiece.assert_not_called()
+        self.node._gripper.assert_not_called()
+        self.assertEqual(self.node.pub_workpiece.messages, [])
+        self.node._goto_pose.assert_not_called()
+
+    def test_retrieve_keeps_cartesian_branch_and_attaches_only_after_descent(self):
+        events = []
+        def plan(request):
+            pose = request.waypoints[0]
+            events.append(('move', pose.position.z, self.node._attached_name,
+                           self.node._machine_workpiece))
+            return self.cartesian_result()
+        self.node._cartesian_client.call_async.side_effect = plan
+        self.node._attach_workpiece.side_effect = lambda name: events.append(('attach', name)) or True
+        self.node._gripper.side_effect = lambda open_: events.append(('gripper', open_)) or True
+
+        self.assertTrue(self.node._retrieve())
+        x, y, z = layout.machine_xyz()
+        approach = z + layout.APPROACH_HEIGHT
+        self.assertEqual(events, [
+            ('move', approach, None, 'workpiece_0'),
+            ('move', z + layout.GRASP_Z_OFFSET, None, 'workpiece_0'),
+            ('attach', 'workpiece_0'), ('gripper', False),
+            ('move', approach, 'workpiece_0', None)])
+        for call in self.node._cartesian_client.call_async.call_args_list:
+            request = call.args[0]
+            self.assertTrue(request.avoid_collisions)
+            pose = request.waypoints[0]
+            self.assertEqual((pose.position.x, pose.position.y), (x, y))
+        self.node._goto_pose.assert_not_called()
+        self.assertEqual(self.node._execute_client.send_goal_async.call_count, 3)
+        self.assertEqual(self.node._attached_name, 'workpiece_0')
+        self.assertIsNone(self.node._machine_workpiece)
+        self.assertEqual([message.data for message in self.node.pub_workpiece.messages], [False])
+
+    def test_partial_approach_cannot_descend_attach_or_clear_machine(self):
+        self.node._cartesian_client.call_async.return_value = self.cartesian_result(0.8)
+        self.assertFalse(self.node._retrieve())
+        self.node._cartesian_client.call_async.assert_called_once()
+        self.node._execute_client.send_goal_async.assert_not_called()
+        self.assert_still_on_machine()
+
+    def test_failed_approach_execution_cannot_descend_or_attach(self):
+        self.goal_handle.get_result_async = lambda: completed(ns(
+            status=6, result=ns(error_code=ns(val=-4))))
+        self.assertFalse(self.node._retrieve())
+        self.node._cartesian_client.call_async.assert_called_once()
+        self.node._execute_client.send_goal_async.assert_called_once()
+        self.assert_still_on_machine()
+
+    def test_failed_descent_does_not_claim_or_close_on_workpiece(self):
+        self.node._cartesian_client.call_async.side_effect = [
+            self.cartesian_result(), self.cartesian_result(0.6)]
+        self.assertFalse(self.node._retrieve())
+        self.assertEqual(self.node._cartesian_client.call_async.call_count, 2)
+        self.node._execute_client.send_goal_async.assert_called_once()
+        self.assert_still_on_machine()
+
+    def test_failed_attachment_keeps_machine_ownership_and_does_not_lift(self):
+        self.node._attach_workpiece.return_value = False
+        self.assertFalse(self.node._retrieve())
+        self.node._attach_workpiece.assert_called_once_with('workpiece_0')
+        self.assertEqual(self.node._cartesian_client.call_async.call_count, 2)
+        self.node._gripper.assert_not_called()
+        self.assertEqual(self.node.pub_workpiece.messages, [])
+        self.assertIsNone(self.node._attached_name)
+        self.assertEqual(self.node._machine_workpiece, 'workpiece_0')
+
+    def test_failed_lift_keeps_attachment_and_does_not_report_success(self):
+        self.node._cartesian_client.call_async.side_effect = [
+            self.cartesian_result(), self.cartesian_result(), self.cartesian_result(0.7)]
+        self.assertFalse(self.node._retrieve())
+        self.assertEqual(self.node._execute_client.send_goal_async.call_count, 2)
+        self.assertEqual(self.node._attached_name, 'workpiece_0')
+        self.assertIsNone(self.node._machine_workpiece)
+        self.assertEqual(self.node.pub_workpiece.messages, [])
 
 
 if __name__ == '__main__':

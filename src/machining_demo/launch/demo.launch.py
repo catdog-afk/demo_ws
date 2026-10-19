@@ -53,6 +53,13 @@ def generate_launch_description():
             pipelines=['ompl', 'chomp', 'pilz_industrial_motion_planner'])
         .to_moveit_configs()
     )
+    # Humble的TOTG默认允许0.1rad量级路径拟合偏离，近工件处重采样后
+    # 可能产生碰撞。收紧关节空间拟合容差并加密时间采样，最终路径
+    # 仍由MoveIt验证；这里的0.001不是末端位置的毫米容差。
+    moveit_config.planning_pipelines['ompl'].update({
+        'path_tolerance': 0.001,
+        'resample_dt': 0.02,
+    })
 
     # ---- move_group（运动规划服务 + /move_action 动作 + /apply_planning_scene）----
     move_group_node = Node(
