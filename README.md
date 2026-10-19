@@ -203,6 +203,9 @@ ffmpeg -f x11grab -video_size 1920x1080 -framerate 30 -i :0.0 -c:v libx264 -pres
 
 ## 仿真视觉扩展：偏移物料定位与抓取
 
+14:56 的缺帧/过期日志及输入恢复修改见 [图像过期分析](docs/vision-frame-debug.md)。
+本次定位服务增加 `retryable` 字段，必须退出旧节点，重新编译接口包及 Python 包后启动。
+
 10 月 19 日执行失败的依据与修改见 [执行失败分析](docs/vision-execution-debug.md)。
 重启脚本现在自动保存 `results/launch_*.txt` 完整终端输出，再出现错误时请连同 CSV/摘要一起提交。
 

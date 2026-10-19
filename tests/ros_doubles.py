@@ -267,6 +267,7 @@ def install():
         'rclpy': dict(ok=lambda: True, spin_until_future_complete=Mock(), spin_once=Mock()),
         'rclpy.node': dict(Node=Node),
         'rclpy.qos': dict(QoSProfile=lambda **kwargs: ns(**kwargs),
+                          ReliabilityPolicy=ns(BEST_EFFORT='best_effort'),
                           DurabilityPolicy=ns(TRANSIENT_LOCAL=1)),
         'rclpy.action': dict(ActionClient=Mock),
         'rclpy.callback_groups': dict(MutuallyExclusiveCallbackGroup=Mock),

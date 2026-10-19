@@ -612,24 +612,32 @@ class ArmController(Node):
     def _locate_workpieces(self, newer_than=None):
         """只接受新鲜、同帧、完整的视觉观测，绝不回退到 slot_xyz。"""
         refresh_deadline = time.monotonic() + 2.0
+        self._vision_wait_reason = None
         while rclpy.ok():
             self._vision_pending = False
-            centers = self._read_vision(newer_than)
+            centers = self._read_vision(newer_than, refresh_deadline)
             if centers is not None or not self._vision_pending:
                 return centers
             if time.monotonic() >= refresh_deadline:
-                self._failure('靠近后相机图像未刷新，停止下降')
+                self._failure('视觉等待新图像超时，停止运动：%s' % self._vision_wait_reason)
                 return None
             time.sleep(0.05)
         self._failure('节点退出，取消视觉定位')
         return None
 
-    def _read_vision(self, newer_than):
-        if not self._vision_client.wait_for_service(timeout_sec=3.0):
+    def _wait_for_image(self, reason):
+        self._vision_pending = True
+        if self._vision_wait_reason is None:
+            self._status('视觉暂不可用，最多等待2秒获取新图像：%s' % reason)
+        self._vision_wait_reason = reason
+
+    def _read_vision(self, newer_than, refresh_deadline):
+        remaining = max(0.0, refresh_deadline - time.monotonic())
+        if not self._vision_client.wait_for_service(timeout_sec=remaining):
             self._failure('视觉定位服务不可用，不执行取料')
             return None
         future = self._vision_client.call_async(LocateWorkpieces.Request())
-        deadline = time.monotonic() + 5.0
+        deadline = refresh_deadline
         while rclpy.ok() and not future.done() and time.monotonic() < deadline:
             time.sleep(0.02)
         if not future.done():
@@ -639,6 +647,9 @@ class ArmController(Node):
         try:
             result = future.result()
             if not result.success:
+                if getattr(result, 'retryable', False):
+                    self._wait_for_image(result.message)
+                    return None
                 raise ValueError(result.message)
             if len(result.centers) != layout.NUM_SLOTS:
                 raise ValueError('观测工件数不完整')
@@ -646,10 +657,13 @@ class ArmController(Node):
                       for p in result.centers]
             age = (self.get_clock().now().nanoseconds - stamps[0]) / 1e9
             if (any(p.header.frame_id != 'panda_link0' for p in result.centers) or
-                    len(set(stamps)) != 1 or not 0 <= age <= 1.0):
+                    len(set(stamps)) != 1 or age < 0):
                 raise ValueError('视觉观测坐标系错误、过期或未刷新')
+            if age > 1.0:
+                self._wait_for_image('传输后的视觉观测已过期：采集帧龄=%.3fs' % age)
+                return None
             if newer_than is not None and stamps[0] <= newer_than:
-                self._vision_pending = True
+                self._wait_for_image('采集帧未晚于首次定位，等待相机刷新')
                 return None
             centers = [(p.pose.position.x, p.pose.position.y, p.pose.position.z)
                        for p in result.centers]

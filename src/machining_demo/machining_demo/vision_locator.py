@@ -2,6 +2,7 @@
 import time
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import PoseStamped
 from cv_bridge import CvBridge
@@ -15,8 +16,9 @@ class VisionLocator(Node):
         super().__init__('vision_locator')
         self.bridge = CvBridge()
         self.latest = None
-        self.create_subscription(Image, '/camera/image_raw', self.image_cb, 1)
-        self.pub = self.create_publisher(Image, '/vision/annotated', 1)
+        image_qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.create_subscription(Image, '/camera/image_raw', self.image_cb, image_qos)
+        self.pub = self.create_publisher(Image, '/vision/annotated', image_qos)
         self.create_service(LocateWorkpieces, '/vision/locate_workpieces', self.locate)
 
     def image_cb(self, msg):
@@ -32,14 +34,24 @@ class VisionLocator(Node):
             self.pub.publish(msg)
 
     def locate(self, request, response):
+        response.retryable = False
         try:
-            if self.latest is None or time.monotonic() - self.latest[1] > 1.0:
-                raise ValueError('相机图像缺失或过期，不使用预设坐标代替')
-            msg = self.latest[0]
-            age = (self.get_clock().now().nanoseconds / 1e9 -
-                   msg.header.stamp.sec - msg.header.stamp.nanosec / 1e9)
-            if msg.header.frame_id != FRAME or not 0 <= age <= 1.0:
-                raise ValueError('相机坐标系或采集时间无效')
+            # 固定本次快照，避免以后改成并发回调时数据与收到时间不一致。
+            snapshot = self.latest
+            if snapshot is None:
+                response.retryable = True
+                raise ValueError('尚未收到相机图像，等待新帧')
+            msg, received = snapshot
+            received_age = time.monotonic() - received
+            captured_ns = msg.header.stamp.sec * 1000000000 + msg.header.stamp.nanosec
+            age = (self.get_clock().now().nanoseconds - captured_ns) / 1e9
+            if msg.header.frame_id != FRAME or age < 0:
+                raise ValueError('相机坐标系或采集时间无效：frame=%s，采集帧龄=%.3fs' %
+                                 (msg.header.frame_id, age))
+            if received_age > 1.0 or age > 1.0:
+                response.retryable = True
+                raise ValueError('相机图像过期：收到间隔=%.3fs，采集帧龄=%.3fs，等待新帧' %
+                                 (received_age, age))
             centers, annotated = detect(self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8'))
             for x, y, z in centers:
                 pose = PoseStamped()

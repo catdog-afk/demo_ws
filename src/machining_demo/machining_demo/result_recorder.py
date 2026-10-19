@@ -28,6 +28,7 @@ class ResultRecorder(Node):
         self.create_subscription(TaskState, '/task/state', self._task_cb, latched)
         self.create_subscription(MachineStatus, '/machine/status', self._machine_cb, 10)
         self.create_subscription(String, '/arm/status', self._arm_cb, 10)
+        self.create_subscription(String, '/camera/status', self._camera_cb, 10)
         self.get_logger().info('运行记录节点就绪，输出目录: %s' %
                                self.get_parameter('output_dir').value)
 
@@ -83,6 +84,9 @@ class ResultRecorder(Node):
 
     def _arm_cb(self, msg):
         self._append('arm', 'feedback', msg.data)
+
+    def _camera_cb(self, msg):
+        self._append('camera', 'status', msg.data)
 
     def _finish(self, final_state, detail):
         self._stream.close()

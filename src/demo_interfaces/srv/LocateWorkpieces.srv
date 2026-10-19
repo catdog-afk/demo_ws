@@ -2,4 +2,6 @@
 ---
 bool success
 string message
+# 仅缺帧/过期等瞬时输入问题为 true，轮廓/标定/身份错误为 false。
+bool retryable
 geometry_msgs/PoseStamped[] centers

@@ -1,7 +1,10 @@
 """独立的简化虚拟相机，仅本节点读取 MoveIt 世界物体。无机器人遮挡/光照物理。"""
+import time
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import Image, CameraInfo
+from std_msgs.msg import String
 from cv_bridge import CvBridge
 from moveit_msgs.srv import GetPlanningScene
 from moveit_msgs.msg import PlanningSceneComponents
@@ -14,16 +17,34 @@ class VirtualCamera(Node):
     def __init__(self):
         super().__init__('virtual_camera')
         self.client = self.create_client(GetPlanningScene, '/get_planning_scene')
-        self.pub = self.create_publisher(Image, '/camera/image_raw', 1)
-        self.info = self.create_publisher(CameraInfo, '/camera/camera_info', 1)
+        image_qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.pub = self.create_publisher(Image, '/camera/image_raw', image_qos)
+        self.info = self.create_publisher(CameraInfo, '/camera/camera_info', image_qos)
         self.bridge = CvBridge()
         self.future = None
+        self.query_started = None
+        self.status = self.create_publisher(String, '/camera/status', 10)
+        self._last_status = None
         self.create_timer(0.2, self.tick)
+
+    def report(self, message):
+        if message != self._last_status:
+            self._last_status = message
+            self.status.publish(String(data=message))
+            self.get_logger().info(message)
 
     def tick(self):
         if self.future is not None:
             if not self.future.done():
-                return
+                if time.monotonic() - self.query_started < 0.8:
+                    return
+                self.future.cancel()
+                self.future = None
+                self.report('相机场景查询超过0.8秒，丢弃请求并重新查询，不复用旧场景')
+            elif time.monotonic() - self.query_started >= 0.8:
+                self.future = None
+                self.report('相机场景响应延迟超过0.8秒，丢弃延迟结果并重新查询')
+        if self.future is not None:
             try:
                 scene = self.future.result().scene
                 objects = []
@@ -53,14 +74,18 @@ class VirtualCamera(Node):
                 info.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
                 info.p = [FOCAL, 0.0, CX, 0.0, 0.0, FOCAL, CY, 0.0, 0.0, 0.0, 1.0, 0.0]
                 self.info.publish(info)
+                self.report('相机成像正常，原始图像持续更新')
             except Exception as exc:
-                self.get_logger().warning('虚拟相机未成像: %s' % exc)
+                self.report('虚拟相机未成像: %s' % exc)
             self.future = None
         if self.client.service_is_ready():
             request = GetPlanningScene.Request()
             request.components.components = PlanningSceneComponents.WORLD_OBJECT_GEOMETRY
             self.requested_at = self.get_clock().now().to_msg()
+            self.query_started = time.monotonic()
             self.future = self.client.call_async(request)
+        else:
+            self.report('相机等待 /get_planning_scene 服务就绪')
 
 
 def main(args=None):
