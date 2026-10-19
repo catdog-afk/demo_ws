@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: pick失败: 抓取点(槽位0)：发现重复动作服务，停止发送运动目标；/move_action/_action/status=/move_group[gid=010f5526840e427e00000000000074030000000000000000],/move_group[gid=010fae597c8097480000000000006a030000000000000000]; /execute_trajectory/_action/status=/move_group[gid=010f5526840e427e00000000000066030000000000000000],/move_group[gid=010fae597c8097480000000000005c030000000000000000]; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller[gid=010f5526860eb08b0000000000006a030000000000000000],/panda_arm_controller[gid=010fae5974801865000000000000c1030000000000000000]；ROS_DOMAIN_ID=0；先运行 bash stop_demo.sh 清理本机本工程；仍重复时检查同域其他主机或换独立ROS域
+本轮任务时长: 5.7 秒
+任务经过的状态: WAIT_STATION -> PICK -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 23
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261019_155035_191674_cf9d6e65df454818b7063920c3df6891.csv

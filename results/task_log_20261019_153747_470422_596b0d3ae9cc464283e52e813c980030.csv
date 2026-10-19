@@ -1,0 +1,12 @@
+time,source,event,detail,slot
+15:37:47.470,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+15:37:47.515,machine,BUSY,BUSY,0
+15:37:48.627,camera,status,相机成像正常，原始图像持续更新,0
+15:37:52.515,machine,READY,READY,0
+15:37:52.554,task,PICK,工位就绪，从槽位 0 取料,0
+15:37:52.677,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+15:37:52.700,arm,feedback,取料：槽位 0 -> 预抓取点,0
+15:37:52.702,arm,feedback,夹爪张开,0
+15:37:52.724,arm,feedback,规划中: 夹爪张开,0
+15:37:52.731,arm,feedback,"夹爪张开：发现重复动作服务，停止发送运动目标；/move_action/_action/status=/move_group,/move_group; /execute_trajectory/_action/status=/move_group,/move_group; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller,/panda_arm_controller",0
+15:37:52.754,task,ABORTED,"pick失败: 夹爪张开：发现重复动作服务，停止发送运动目标；/move_action/_action/status=/move_group,/move_group; /execute_trajectory/_action/status=/move_group,/move_group; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller,/panda_arm_controller",0

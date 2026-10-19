@@ -1,0 +1,11 @@
+time,source,event,detail,slot
+15:29:45.078,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+15:29:45.157,machine,BUSY,BUSY,0
+15:29:49.957,machine,READY,READY,0
+15:29:50.051,task,PICK,工位就绪，从槽位 0 取料,0
+15:29:50.194,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+15:29:50.219,arm,feedback,取料：槽位 0 -> 预抓取点,0
+15:29:50.219,arm,feedback,夹爪张开,0
+15:29:50.242,arm,feedback,规划中: 夹爪张开,0
+15:29:50.246,arm,feedback,"夹爪张开：发现重复动作服务，停止发送运动目标；/move_action/_action/status=/move_group,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_; /execute_trajectory/_action/status=/move_group,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_",0
+15:29:50.250,task,ABORTED,"pick失败: 夹爪张开：发现重复动作服务，停止发送运动目标；/move_action/_action/status=/move_group,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_; /execute_trajectory/_action/status=/move_group,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_; /panda_arm_controller/follow_joint_trajectory/_action/status=/panda_arm_controller,_NODE_NAMESPACE_UNKNOWN_/_NODE_NAME_UNKNOWN_",0
