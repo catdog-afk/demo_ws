@@ -1,0 +1,9 @@
+========== A2 运行摘要 ==========
+结束状态: ABORTED
+槽位: 0
+说明: pick失败: 视觉定位失败：相机图像缺失或过期，不使用预设坐标代替
+本轮任务时长: 9.3 秒
+任务经过的状态: WAIT_STATION -> PICK -> ABORTED
+A2 阶段验收: 任务中止
+事件总数: 15
+CSV 记录: /home/catdog/demo_ws/results/task_log_20261019_145634_078618_2bc72d4f23db47329cc1789ad1b9525c.csv

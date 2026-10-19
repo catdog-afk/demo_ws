@@ -1,0 +1,16 @@
+time,source,event,detail,slot
+14:56:34.079,task,WAIT_STATION,槽位 0：等待场景、服务及工位 READY,0
+14:56:34.079,machine,BUSY,BUSY,0
+14:56:38.881,machine,READY,READY,0
+14:56:38.948,task,PICK,工位就绪，从槽位 0 取料,0
+14:56:39.072,arm,feedback,"视觉定位：workpiece_0=(0.4622,0.1164,0.0620); workpiece_1=(0.4408,0.2429,0.0620); workpiece_2=(0.4561,0.3948,0.0620)",0
+14:56:39.097,arm,feedback,取料：槽位 0 -> 预抓取点,0
+14:56:39.098,arm,feedback,夹爪张开,0
+14:56:39.121,arm,feedback,规划中: 夹爪张开,0
+14:56:39.227,arm,feedback,规划完成: 夹爪张开,0
+14:56:39.330,arm,feedback,执行完成: 夹爪张开,0
+14:56:39.354,arm,feedback,规划中: 预抓取点(槽位0),0
+14:56:39.460,arm,feedback,规划完成: 预抓取点(槽位0),0
+14:56:43.277,arm,feedback,执行完成: 预抓取点(槽位0),0
+14:56:43.301,arm,feedback,视觉定位失败：相机图像缺失或过期，不使用预设坐标代替,0
+14:56:43.348,task,ABORTED,pick失败: 视觉定位失败：相机图像缺失或过期，不使用预设坐标代替,0
